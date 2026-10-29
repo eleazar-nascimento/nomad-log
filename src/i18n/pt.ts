@@ -46,7 +46,8 @@ export const pt: TranslationDictionary = {
   },
   itinerary: {
     title: "Roteiro da Viagem",
-    vectorMapTitle: "Mapa Vetorial em Cache Local",
+    vectorMapTitle: "Mapa Vetorial",
+    vectorMapSubtitle: "Cache local offline",
     vectorMapBadge: "100% OFFLINE",
     selectedStop: "Parada Selecionada",
     elevation: "Elevação",

@@ -46,7 +46,8 @@ export const en: TranslationDictionary = {
   },
   itinerary: {
     title: "Trip Itinerary",
-    vectorMapTitle: "Locally Cached Vector Map",
+    vectorMapTitle: "Vector Map",
+    vectorMapSubtitle: "Offline local cache",
     vectorMapBadge: "100% OFFLINE",
     selectedStop: "Selected Waypoint",
     elevation: "Elevation",

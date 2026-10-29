@@ -276,21 +276,59 @@ export const VectorRouteMap: React.FC<VectorRouteMapProps> = ({ waypoints }) => 
           borderColor: colors.grayscale[500],
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-          <Compass size={16} color={colors.adventure.sky} />
-          <AppText variant="headline" style={{ fontWeight: "700" }}>
-            {t.itinerary.vectorMapTitle}
-          </AppText>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            flex: 1,
+            minWidth: 0,
+            marginRight: 12,
+          }}
+        >
+          <View
+            style={{
+              width: 30,
+              height: 30,
+              borderRadius: radii.md,
+              backgroundColor: "rgba(56, 189, 248, 0.15)",
+              borderWidth: 1,
+              borderColor: "rgba(56, 189, 248, 0.3)",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <Compass size={16} color={colors.adventure.sky} />
+          </View>
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <AppText
+              variant="headline"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{ fontWeight: "700" }}
+            >
+              {t.itinerary.vectorMapTitle}
+            </AppText>
+            <AppText
+              variant="footnote"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              color={colors.adventure.emerald}
+            >
+              ● {t.itinerary.vectorMapSubtitle}
+            </AppText>
+          </View>
         </View>
 
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", flexShrink: 0 }}>
           {/* Seletor de visualização */}
           <View
             style={{
               flexDirection: "row",
               backgroundColor: colors.grayscale[700],
               borderRadius: radii.pill,
-              padding: 2,
+              padding: 3,
               borderWidth: 1,
               borderColor: colors.grayscale[500],
             }}
@@ -301,16 +339,16 @@ export const VectorRouteMap: React.FC<VectorRouteMapProps> = ({ waypoints }) => 
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                gap: 4,
-                paddingHorizontal: 8,
-                paddingVertical: 4,
+                gap: 5,
+                paddingHorizontal: 10,
+                paddingVertical: 5,
                 borderRadius: radii.pill,
                 backgroundColor:
                   viewMode === "map" ? colors.primary[100] : "transparent",
               }}
             >
               <Navigation
-                size={11}
+                size={12}
                 color={
                   viewMode === "map"
                     ? colors.grayscale[100]
@@ -336,9 +374,9 @@ export const VectorRouteMap: React.FC<VectorRouteMapProps> = ({ waypoints }) => 
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                gap: 4,
-                paddingHorizontal: 8,
-                paddingVertical: 4,
+                gap: 5,
+                paddingHorizontal: 10,
+                paddingVertical: 5,
                 borderRadius: radii.pill,
                 backgroundColor:
                   viewMode === "elevation"
@@ -347,7 +385,7 @@ export const VectorRouteMap: React.FC<VectorRouteMapProps> = ({ waypoints }) => 
               }}
             >
               <TrendingUp
-                size={11}
+                size={12}
                 color={
                   viewMode === "elevation"
                     ? colors.grayscale[900]
@@ -367,8 +405,6 @@ export const VectorRouteMap: React.FC<VectorRouteMapProps> = ({ waypoints }) => 
               </AppText>
             </TouchableOpacity>
           </View>
-
-          <Badge label={t.itinerary.vectorMapBadge} variant="sky" size="sm" />
         </View>
       </View>
 

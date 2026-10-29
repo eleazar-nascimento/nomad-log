@@ -47,6 +47,7 @@ export interface TranslationDictionary {
   itinerary: {
     title: string;
     vectorMapTitle: string;
+    vectorMapSubtitle: string;
     vectorMapBadge: string;
     selectedStop: string;
     elevation: string;

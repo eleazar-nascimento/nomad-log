@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "NomadLog - Diário e Despesas Offline",
+    "slug": "nomad-log",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "nomadlog",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0F1115"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
+

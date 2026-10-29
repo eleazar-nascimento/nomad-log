@@ -27,10 +27,14 @@ last_updated: "2026-10-29T04:25:00Z"
   - Conversor de câmbio interativo bidirecional
   - Gráfico de barras com distribuição de despesas por categoria
   - Extrato detalhado com valor local e base
-- [x] **Roteiro & Mapa Vetorial**:
-  - Visualizador vetorial interativo em SVG sem dependência de internet
+- [x] **Roteiro & Mapa Vetorial 100% Dinâmico**:
+  - Renderização vetorial dinâmica alimentada diretamente pelos waypoints da viagem ativa
+  - **Modo Duplo Interativo**: Alternador entre **Trilha 2D Bézier** e **Perfil Altimétrico de Relevo**
+  - Projeção de nós por tipo de parada (Trilha, Trem, Voo, Ônibus, Hospedagem, Passeio) e status visual (Feito, Em Trânsito, Planejado)
+  - Gráfico de área altimétrica com cálculo de altitude máxima e ganho acumulado em metros
+  - Barra de métricas (Paradas totais, Pico de altitude, Distância percorrida e % de conclusão)
+  - Trilho horizontal de nós para seleção rápida e painel inspetor com alternador de status com 1 toque
   - Seletor de dias com calendário horizontal (Figma Daily Routine)
-  - Alternância de status de waypoints (*Pendente* ➡️ *Em Trânsito* ➡️ *Feito*)
 - [x] **Diário de Bordo & Memórias**:
   - Cards com fotos, clima, humor e altitude
   - Editor de memórias com tags

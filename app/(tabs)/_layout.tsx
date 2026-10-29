@@ -1,6 +1,6 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { View, Platform } from "react-native";
+import { Platform } from "react-native";
 import {
   Compass,
   Map,
@@ -9,8 +9,11 @@ import {
   Backpack,
 } from "lucide-react-native";
 import { colors } from "@/theme";
+import { useTranslation } from "@/i18n";
 
 export default function TabLayout() {
+  const { t } = useTranslation();
+
   return (
     <Tabs
       screenOptions={{
@@ -34,7 +37,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Viagem",
+          title: t.tabs.trip,
           tabBarIcon: ({ color, focused }) => (
             <Compass size={22} color={color} strokeWidth={focused ? 2.5 : 2} />
           ),
@@ -43,7 +46,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="itinerary"
         options={{
-          title: "Roteiro",
+          title: t.tabs.itinerary,
           tabBarIcon: ({ color, focused }) => (
             <Map size={22} color={color} strokeWidth={focused ? 2.5 : 2} />
           ),
@@ -52,7 +55,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="expenses"
         options={{
-          title: "Gastos",
+          title: t.tabs.expenses,
           tabBarIcon: ({ color, focused }) => (
             <Coins size={22} color={color} strokeWidth={focused ? 2.5 : 2} />
           ),
@@ -61,7 +64,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="journal"
         options={{
-          title: "Diário",
+          title: t.tabs.journal,
           tabBarIcon: ({ color, focused }) => (
             <BookOpen size={22} color={color} strokeWidth={focused ? 2.5 : 2} />
           ),
@@ -70,7 +73,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="packing"
         options={{
-          title: "Mochila",
+          title: t.tabs.packing,
           tabBarIcon: ({ color, focused }) => (
             <Backpack size={22} color={color} strokeWidth={focused ? 2.5 : 2} />
           ),

@@ -4,27 +4,26 @@ import {
   Modal,
   TouchableOpacity,
   ScrollView,
-  Platform,
 } from "react-native";
 import {
   X,
   Crown,
-  Check,
-  ShieldCheck,
   Cloud,
   FileSpreadsheet,
   Globe,
   Sparkles,
 } from "lucide-react-native";
 import { colors, radii } from "@/theme";
-import { AppText, Button, Card, Badge } from "@/components/ui";
+import { AppText, Button, Badge } from "@/components/ui";
 import { useAppStore } from "@/store";
+import { useTranslation } from "@/i18n";
 
 export const ProUpgradeModal: React.FC<{
   visible: boolean;
   onClose: () => void;
 }> = ({ visible, onClose }) => {
   const { isPro, upgradeToPro, downgradeToFree } = useAppStore();
+  const { t } = useTranslation();
   const [selectedPlan, setSelectedPlan] = useState<"lifetime" | "annual">(
     "lifetime"
   );
@@ -42,23 +41,23 @@ export const ProUpgradeModal: React.FC<{
   const PRO_BENEFITS = [
     {
       icon: Globe,
-      title: "Viagens Ilimitadas Simultâneas",
-      description: "Planeje quantos mochilões e expedições quiser sem limite de 1 viagem ativa.",
+      title: t.pro.unlimitedTripsTitle,
+      description: t.pro.unlimitedTripsDesc,
     },
     {
       icon: Cloud,
-      title: "Backup Criptografado na Nuvem",
-      description: "Suas memórias e gastos ficam protegidos no dispositivo e sincronizam quando encontrar Wi-Fi.",
+      title: t.pro.cloudBackupTitle,
+      description: t.pro.cloudBackupDesc,
     },
     {
       icon: Sparkles,
-      title: "Conversor com Histórico Offline",
-      description: "Acesse gráficos de flutuação e taxas congeladas de mais de 150 moedas internacionais.",
+      title: t.pro.fxHistoryTitle,
+      description: t.pro.fxHistoryDesc,
     },
     {
       icon: FileSpreadsheet,
-      title: "Exportação em PDF e Planilha CSV",
-      description: "Gere relatórios completos de despesas para dividir com amigos ou prestação de contas.",
+      title: t.pro.exportReportsTitle,
+      description: t.pro.exportReportsDesc,
     },
   ];
 
@@ -103,7 +102,7 @@ export const ProUpgradeModal: React.FC<{
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
               <Crown size={20} color={colors.adventure.amber} />
               <AppText variant="headline" style={{ fontWeight: "700" }}>
-                Pacote Mochileiro Pro
+                {t.pro.title}
               </AppText>
             </View>
             <TouchableOpacity
@@ -128,11 +127,10 @@ export const ProUpgradeModal: React.FC<{
             {/* Tagline */}
             <View style={{ gap: 4 }}>
               <AppText variant="title2" style={{ fontWeight: "700" }}>
-                Viaje para qualquer canto do planeta sem se preocupar.
+                {t.pro.tagline}
               </AppText>
               <AppText variant="body2" color={colors.grayscale[300]}>
-                Feito sob medida para quem pega estradas remotas, faz trilhas nas
-                montanhas ou vive o estilo nômade internacional.
+                {t.pro.subtagline}
               </AppText>
             </View>
 
@@ -205,12 +203,12 @@ export const ProUpgradeModal: React.FC<{
                 <View style={{ gap: 2 }}>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                     <AppText variant="subheadline" style={{ fontWeight: "700" }}>
-                      Acesso Vitalício
+                      {t.pro.lifetimeOption}
                     </AppText>
-                    <Badge label="MELHOR VALOR" variant="amber" size="sm" />
+                    <Badge label={t.pro.bestValueBadge} variant="amber" size="sm" />
                   </View>
                   <AppText variant="footnote" color={colors.grayscale[300]}>
-                    Pague uma única vez. Atualizações para sempre.
+                    {t.pro.lifetimeDesc}
                   </AppText>
                 </View>
                 <View style={{ alignItems: "flex-end" }}>
@@ -219,10 +217,10 @@ export const ProUpgradeModal: React.FC<{
                     color={colors.adventure.amber}
                     style={{ fontWeight: "700" }}
                   >
-                    R$ 59,90
+                    {t.pro.lifetimePrice}
                   </AppText>
                   <AppText variant="caption" color={colors.grayscale[400]}>
-                    pagamento único
+                    {t.pro.oneTimePayment}
                   </AppText>
                 </View>
               </TouchableOpacity>
@@ -250,18 +248,18 @@ export const ProUpgradeModal: React.FC<{
               >
                 <View style={{ gap: 2 }}>
                   <AppText variant="subheadline" style={{ fontWeight: "700" }}>
-                    Plano Anual
+                    {t.pro.annualOption}
                   </AppText>
                   <AppText variant="footnote" color={colors.grayscale[300]}>
-                    Equivalente a R$ 2,90 / mês
+                    {t.pro.annualDesc}
                   </AppText>
                 </View>
                 <View style={{ alignItems: "flex-end" }}>
                   <AppText variant="title3" style={{ fontWeight: "700" }}>
-                    R$ 34,90
+                    {t.pro.annualPrice}
                   </AppText>
                   <AppText variant="caption" color={colors.grayscale[400]}>
-                    por ano
+                    {t.pro.perYear}
                   </AppText>
                 </View>
               </TouchableOpacity>
@@ -279,11 +277,11 @@ export const ProUpgradeModal: React.FC<{
                   }}
                 >
                   <AppText variant="subheadline" color={colors.adventure.emerald} style={{ fontWeight: "700" }}>
-                    ✓ Você já possui o Mochileiro Pro Ativo!
+                    ✓ {t.pro.proActiveNotice}
                   </AppText>
                 </View>
                 <Button
-                  title="Voltar ao Plano Gratuito (Teste)"
+                  title={t.pro.backToFreeTest}
                   variant="secondary"
                   size="sm"
                   onPress={downgradeToFree}
@@ -293,8 +291,8 @@ export const ProUpgradeModal: React.FC<{
               <Button
                 title={
                   selectedPlan === "lifetime"
-                    ? "Garantir Mochileiro Pro Vitalício (R$ 59,90)"
-                    : "Assinar Plano Anual (R$ 34,90)"
+                    ? t.pro.upgradeLifetimeBtn
+                    : t.pro.upgradeAnnualBtn
                 }
                 variant="primary"
                 size="lg"
@@ -310,7 +308,7 @@ export const ProUpgradeModal: React.FC<{
                 align="center"
                 style={{ fontWeight: "700" }}
               >
-                🎉 Parabéns! Recursos Pro Desbloqueados com Sucesso!
+                {t.pro.successToast}
               </AppText>
             )}
           </ScrollView>

@@ -26,6 +26,7 @@ const STORAGE_KEY = "@nomadlog/state/v1";
 export interface NomadStoreState extends NomadPersistedState {
   hydrated: boolean;
   setHydrated: (h: boolean) => void;
+  setLocale: (locale: "pt" | "en") => void;
 
   // Actions
   addExpense: (data: {
@@ -117,6 +118,10 @@ export const useNomadStore = create<NomadStoreState>((set, get) => ({
   ...initial,
   hydrated: false,
   setHydrated: (h) => set({ hydrated: h }),
+  setLocale: (locale) => {
+    set({ locale });
+    saveToAsyncStorage({ ...get(), locale });
+  },
 
   hydrateFromStorage: async () => {
     try {

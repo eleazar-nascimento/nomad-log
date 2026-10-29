@@ -5,10 +5,12 @@ import { Map, Mountain, Navigation, Compass, Layers } from "lucide-react-native"
 import { colors, radii } from "@/theme";
 import { AppText, Card, Badge } from "@/components/ui";
 import { Waypoint } from "@/store";
+import { useTranslation } from "@/i18n";
 
 export const VectorRouteMap: React.FC<{
   waypoints: Waypoint[];
 }> = ({ waypoints }) => {
+  const { t } = useTranslation();
   const [selectedWaypointIndex, setSelectedWaypointIndex] = useState(0);
 
   // SVG canvas dimensions
@@ -50,10 +52,10 @@ export const VectorRouteMap: React.FC<{
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
           <Compass size={15} color={colors.adventure.sky} />
           <AppText variant="subheadline" style={{ fontWeight: "700" }}>
-            Mapa Vetorial em Cache Local
+            {t.itinerary.vectorMapTitle}
           </AppText>
         </View>
-        <Badge label="100% OFFLINE" variant="sky" size="sm" />
+        <Badge label={t.itinerary.vectorMapBadge} variant="sky" size="sm" />
       </View>
 
       {/* SVG Canvas da Trilha */}

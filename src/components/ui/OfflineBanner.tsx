@@ -4,19 +4,27 @@ import { WifiOff, RefreshCw, CheckCircle2, ShieldCheck } from "lucide-react-nati
 import { colors, radii } from "@/theme";
 import { AppText } from "./Typography";
 import { useAppStore } from "@/store";
+import { useTranslation } from "@/i18n";
 
 export const OfflineBanner: React.FC<{ onPress?: () => void }> = ({
   onPress,
 }) => {
-  const { state, syncMutationQueue } = useAppStore();
+  const { state } = useAppStore();
+  const { t, isPt } = useTranslation();
   const queueCount = state.mutationQueue.length;
 
   const getHoursAgo = (ts: number) => {
     const diff = Math.max(0, Date.now() - ts);
     const hours = Math.floor(diff / 3600000);
-    if (hours === 0) return "há menos de 1h";
-    if (hours === 1) return "há 1h";
-    return `há ${hours}h`;
+    if (isPt) {
+      if (hours === 0) return "há menos de 1h";
+      if (hours === 1) return "há 1h";
+      return `há ${hours}h`;
+    } else {
+      if (hours === 0) return "<1h ago";
+      if (hours === 1) return "1h ago";
+      return `${hours}h ago`;
+    }
   };
 
   return (
@@ -61,7 +69,7 @@ export const OfflineBanner: React.FC<{ onPress?: () => void }> = ({
               color={state.isOfflineMode ? colors.adventure.amber : colors.adventure.emerald}
               style={{ fontWeight: "700" }}
             >
-              {state.isOfflineMode ? "MODO OFFLINE ATIVO" : "ONLINE COM BACKUP"}
+              {state.isOfflineMode ? t.header.offlineModeActive : t.header.onlineWithBackup}
             </AppText>
             <View
               style={{
@@ -72,7 +80,7 @@ export const OfflineBanner: React.FC<{ onPress?: () => void }> = ({
               }}
             />
             <AppText variant="caption" color={colors.grayscale[300]}>
-              Câmbio {getHoursAgo(state.ratesSnapshotTimestamp)}
+              {isPt ? "Câmbio" : "FX"} {getHoursAgo(state.ratesSnapshotTimestamp)}
             </AppText>
           </View>
         </View>
@@ -98,14 +106,14 @@ export const OfflineBanner: React.FC<{ onPress?: () => void }> = ({
             color={colors.primary[100]}
             style={{ fontWeight: "600" }}
           >
-            {queueCount} na fila
+            {queueCount} {t.header.queuePending}
           </AppText>
         </View>
       ) : (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
           <CheckCircle2 size={13} color={colors.adventure.emerald} />
           <AppText variant="caption" color={colors.adventure.emerald}>
-            Salvo local
+            {t.header.savedLocally}
           </AppText>
         </View>
       )}

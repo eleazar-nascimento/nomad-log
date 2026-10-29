@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { View, ScrollView, TouchableOpacity } from "react-native";
-import { Plus, CheckSquare, Scale, Backpack, Sparkles } from "lucide-react-native";
-import { colors, radii } from "@/theme";
+import { View, ScrollView } from "react-native";
+import { Plus, Scale, Backpack } from "lucide-react-native";
+import { colors } from "@/theme";
 import { AppText, Button, Card, CircularProgress, OfflineBanner, AnimatedContainer } from "@/components/ui";
 import { TopHeader } from "@/components/layout";
 import { PackingCategorySection } from "../components/PackingCategorySection";
 import { AddItemModal } from "../components/AddItemModal";
 import { useAppStore, PackingCategory } from "@/store";
+import { useTranslation } from "@/i18n";
 
 const CATEGORIES_ORDER: PackingCategory[] = [
   "documentos",
@@ -21,6 +22,7 @@ export const PackingScreen: React.FC<{
   onOpenProModal: () => void;
 }> = ({ onOpenTripModal, onOpenProModal }) => {
   const { activeTrip, activeTripPacking, packingProgress } = useAppStore();
+  const { t, isPt } = useTranslation();
   const [modalOpen, setModalOpen] = useState(false);
 
   if (!activeTrip) return null;
@@ -41,7 +43,7 @@ export const PackingScreen: React.FC<{
         }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Banner com Anel de Progresso Circular (Inspirado no Routine Planner Figma) */}
+        {/* Banner com Anel de Progresso Circular */}
         <AnimatedContainer delay={40}>
           <Card
             variant="surface"
@@ -57,11 +59,13 @@ export const PackingScreen: React.FC<{
               <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                 <Backpack size={16} color={colors.primary[100]} />
                 <AppText variant="headline" style={{ fontWeight: "700" }}>
-                  Status da Mochila
+                  {t.packing.backpackStatus}
                 </AppText>
               </View>
               <AppText variant="title3" style={{ fontWeight: "700" }}>
-                {packingProgress.packed} de {packingProgress.total} itens
+                {isPt
+                  ? `${packingProgress.packed} de ${packingProgress.total} ${t.packing.itemsCount}`
+                  : `${packingProgress.packed} of ${packingProgress.total} ${t.packing.itemsCount}`}
               </AppText>
               <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
                 <Scale size={13} color={colors.adventure.sky} />
@@ -70,7 +74,7 @@ export const PackingScreen: React.FC<{
                   color={colors.adventure.sky}
                   style={{ fontWeight: "600" }}
                 >
-                  Peso empacotado: {packingProgress.totalWeightKg} kg
+                  {t.packing.packedWeight}: {packingProgress.totalWeightKg} kg
                 </AppText>
               </View>
             </View>
@@ -95,10 +99,10 @@ export const PackingScreen: React.FC<{
             }}
           >
             <AppText variant="headline" style={{ fontWeight: "700" }}>
-              Listas por Categoria
+              {t.packing.categoryLists}
             </AppText>
             <Button
-              title="Novo Item"
+              title={t.packing.newItem}
               variant="primary"
               size="sm"
               onPress={() => setModalOpen(true)}

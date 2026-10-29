@@ -40,6 +40,22 @@ last_updated: "2026-10-29T04:25:00Z"
 - [x] **Modelo Freemium & Pacote Mochileiro Pro**:
   - Regra de 1 viagem ativa no Free e ilimitadas no Pro
   - Modal de compra com opções Vitalícia e Anual
+- [x] **Internacionalização Completa (i18n)**:
+  - Suporte nativo a Português (`pt-BR`) e Inglês (`en-US`)
+  - Troca de idioma em tempo real via Zustand com persistência local
+  - Dicionários tipados cobrindo 100% das abas, telas, cards e modais
+- [x] **Central de Configurações & Hub de Exportação Pro**:
+  - Nova tela `app/settings.tsx` com acesso pelo ícone de engrenagem no cabeçalho
+  - Exportação real de Planilha CSV (com UTF-8 BOM para Excel e Google Sheets)
+  - Exportação de Backup Estruturado JSON (viagem, roteiro, mochila, diário)
+  - Exportação de Relatório Narrativo em Markdown com métricas financeiras
+  - Download nativo na web via Blob e fallback automático para área de transferência
+  - Status e gatilhos de sincronização da fila de mutações criptografada (AES-256)
+- [x] **Ajuste para Dynamic Island & Safe Area**:
+  - Margem superior dinâmica com `useSafeAreaInsets()` no `TopHeader`
+  - Moldura de iPhone 16 Pro com ilha dinâmica integrada no preview web
+- [x] **Integração com API de Câmbio em Tempo Real**:
+  - Conexão com `https://open.er-api.com/v6/latest/USD` para taxas atualizadas quando online
 - [x] **Moldura Responsiva Web com Painel do Mochileiro**:
   - Alternador de modo avião / sem sinal
   - Inspetor e sincronizador da fila de mutações
@@ -48,10 +64,9 @@ last_updated: "2026-10-29T04:25:00Z"
 
 ---
 
-## 🔮 Roadmap de Evolução Futura (v1.1+)
+## 🔮 Roadmap de Evolução Futura (v1.2+)
 
-- [ ] **Exportação Real de Relatórios:** Gerar arquivo PDF/CSV formatado via `expo-print` ou `expo-sharing`.
-- [ ] **Migração para MMKV:** Adicionar `react-native-mmkv` para persistência síncrona ainda mais rápida.
+- [ ] **Migração para MMKV:** Adicionar `react-native-mmkv` para persistência síncrona ainda mais rápida em dispositivos móveis compilados.
 - [ ] **Sincronização com Backend Real:** Conectar o `syncMutationQueue()` a uma API Supabase ou NestJS com resolução de conflitos CRDT (Conflict-free Replicated Data Types).
 - [ ] **Gravação de Áudio Offline:** Adicionar anotações de voz no diário de bordo com `expo-av`.
 

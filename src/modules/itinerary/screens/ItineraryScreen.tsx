@@ -1,19 +1,21 @@
 import React, { useState } from "react";
 import { View, ScrollView, TouchableOpacity } from "react-native";
-import { Plus, Calendar, Compass, MapPin } from "lucide-react-native";
+import { Plus, Calendar, Compass } from "lucide-react-native";
 import { colors, radii } from "@/theme";
-import { AppText, Button, OfflineBanner } from "@/components/ui";
+import { AppText, OfflineBanner } from "@/components/ui";
 import { TopHeader } from "@/components/layout";
 import { VectorRouteMap } from "../components/VectorRouteMap";
 import { DayScheduleCard } from "../components/DayScheduleCard";
 import { AddWaypointModal } from "../components/AddWaypointModal";
 import { useAppStore } from "@/store";
+import { useTranslation } from "@/i18n";
 
 export const ItineraryScreen: React.FC<{
   onOpenTripModal: () => void;
   onOpenProModal: () => void;
 }> = ({ onOpenTripModal, onOpenProModal }) => {
   const { activeTrip, activeTripWaypoints } = useAppStore();
+  const { t, isPt } = useTranslation();
   const [selectedDay, setSelectedDay] = useState<number | "all">("all");
   const [addModalOpen, setAddModalOpen] = useState(false);
 
@@ -58,7 +60,7 @@ export const ItineraryScreen: React.FC<{
         {/* Mapa Vetorial em Cache Local */}
         <VectorRouteMap waypoints={activeTripWaypoints} />
 
-        {/* Seletor Horizontal de Dias (Inspirado no Figma Daily Routine Planner) */}
+        {/* Seletor Horizontal de Dias */}
         <View style={{ gap: 8 }}>
           <View
             style={{
@@ -70,7 +72,7 @@ export const ItineraryScreen: React.FC<{
             <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
               <Calendar size={15} color={colors.primary[100]} />
               <AppText variant="headline" style={{ fontWeight: "700" }}>
-                Dias da Viagem
+                {t.itinerary.tripDays}
               </AppText>
             </View>
 
@@ -93,7 +95,7 @@ export const ItineraryScreen: React.FC<{
                 color={colors.grayscale[100]}
                 style={{ fontWeight: "700" }}
               >
-                Nova Parada
+                {t.itinerary.newStop}
               </AppText>
             </TouchableOpacity>
           </View>
@@ -127,7 +129,7 @@ export const ItineraryScreen: React.FC<{
                 color={colors.grayscale[100]}
                 style={{ fontWeight: "700" }}
               >
-                Todos ({activeTripWaypoints.length})
+                {t.itinerary.allDays} ({activeTripWaypoints.length})
               </AppText>
             </TouchableOpacity>
 
@@ -163,7 +165,7 @@ export const ItineraryScreen: React.FC<{
                       color={colors.grayscale[100]}
                       style={{ fontWeight: "700" }}
                     >
-                      Dia {day}
+                      {t.itinerary.dayPrefix} {day}
                     </AppText>
                     <AppText
                       variant="footnote"
@@ -171,7 +173,7 @@ export const ItineraryScreen: React.FC<{
                         isSelected ? colors.grayscale[200] : colors.grayscale[400]
                       }
                     >
-                      {count} paradas
+                      {count} {t.itinerary.stopsCount}
                     </AppText>
                   </TouchableOpacity>
                 );
@@ -195,14 +197,14 @@ export const ItineraryScreen: React.FC<{
           >
             <Compass size={28} color={colors.grayscale[400]} />
             <AppText variant="subheadline" style={{ fontWeight: "600" }}>
-              Nenhuma atividade cadastrada
+              {t.itinerary.noActivities}
             </AppText>
             <AppText
               variant="footnote"
               color={colors.grayscale[300]}
               align="center"
             >
-              Toque em "Nova Parada" acima para planejar seu itinerário offline.
+              {t.itinerary.noActivitiesDesc}
             </AppText>
           </View>
         ) : (
@@ -213,7 +215,7 @@ export const ItineraryScreen: React.FC<{
               <DayScheduleCard
                 key={dayNum}
                 dayIndex={dayNum}
-                date={`Dia ${dayNum} de Viagem`}
+                date={`${t.itinerary.dayPrefix} ${dayNum}`}
                 waypoints={groupedByDay[dayNum]}
               />
             ))

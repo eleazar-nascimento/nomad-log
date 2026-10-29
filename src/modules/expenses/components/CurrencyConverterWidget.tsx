@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity, ScrollView } from "react-native";
-import { ArrowRightLeft, RefreshCw, Coins, Sparkles } from "lucide-react-native";
+import { ArrowRightLeft, RefreshCw, Coins } from "lucide-react-native";
 import { colors, radii } from "@/theme";
 import { AppText, Card, Input, Badge } from "@/components/ui";
 import {
@@ -10,9 +10,11 @@ import {
   formatMoney,
   useAppStore,
 } from "@/store";
+import { useTranslation } from "@/i18n";
 
 export const CurrencyConverterWidget: React.FC = () => {
   const { state, activeTrip, refreshFxRates } = useAppStore();
+  const { t } = useTranslation();
 
   const [fromCurrency, setFromCurrency] = useState<CurrencyCode>(
     activeTrip?.localCurrencies[0] || "THB"
@@ -71,20 +73,20 @@ export const CurrencyConverterWidget: React.FC = () => {
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
           <Coins size={16} color={colors.adventure.amber} />
           <AppText variant="headline" style={{ fontWeight: "700" }}>
-            Conversor de Câmbio Offline
+            {t.expenses.fxWidgetTitle}
           </AppText>
         </View>
-        <Badge label="OFFLINE" variant="amber" size="sm" />
+        <Badge label={t.expenses.fxWidgetBadge} variant="amber" size="sm" />
       </View>
 
       <AppText variant="footnote" color={colors.grayscale[300]}>
-        Converta qualquer valor na rua ou feira sem gastar dados móveis:
+        {t.expenses.fxWidgetDesc}
       </AppText>
 
       {/* Seletor rápido de moedas de origem */}
       <View style={{ gap: 6 }}>
         <AppText variant="caption" color={colors.grayscale[300]}>
-          Moeda de Origem (Você paga):
+          {t.expenses.fromCurrency}:
         </AppText>
         <ScrollView
           horizontal
@@ -98,19 +100,24 @@ export const CurrencyConverterWidget: React.FC = () => {
               <TouchableOpacity
                 key={cur}
                 onPress={() => setFromCurrency(cur)}
+                activeOpacity={0.8}
                 style={{
-                  paddingHorizontal: 8,
-                  paddingVertical: 4,
-                  borderRadius: radii.sm,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 5,
+                  paddingHorizontal: 10,
+                  paddingVertical: 6,
+                  borderRadius: radii.md,
                   backgroundColor: isSelected
-                    ? "rgba(245, 158, 11, 0.25)"
-                    : colors.grayscale[700],
-                  borderWidth: 1,
+                    ? "rgba(245, 158, 11, 0.18)"
+                    : colors.grayscale[600],
+                  borderWidth: 1.5,
                   borderColor: isSelected
                     ? colors.adventure.amber
                     : colors.grayscale[500],
                 }}
               >
+                <AppText variant="caption">{info.flag}</AppText>
                 <AppText
                   variant="caption"
                   color={
@@ -118,9 +125,9 @@ export const CurrencyConverterWidget: React.FC = () => {
                       ? colors.adventure.amber
                       : colors.grayscale[200]
                   }
-                  style={{ fontWeight: "600" }}
+                  style={{ fontWeight: "700" }}
                 >
-                  {info?.flag} {cur}
+                  {cur}
                 </AppText>
               </TouchableOpacity>
             );
@@ -128,22 +135,17 @@ export const CurrencyConverterWidget: React.FC = () => {
         </ScrollView>
       </View>
 
-      {/* Bloco de Conversão Interativa */}
+      {/* Inputs de Conversão e Resultado */}
       <View
         style={{
           flexDirection: "row",
           alignItems: "center",
-          gap: 8,
-          backgroundColor: colors.grayscale[700],
-          borderRadius: radii.md,
-          padding: 12,
-          borderWidth: 1,
-          borderColor: colors.grayscale[500],
+          gap: 10,
         }}
       >
         <View style={{ flex: 1, gap: 4 }}>
           <AppText variant="caption" color={colors.grayscale[400]}>
-            Valor ({fromCurrency})
+            {t.expenses.enterAmount} ({fromCurrency})
           </AppText>
           <Input
             value={amountStr}
@@ -174,7 +176,7 @@ export const CurrencyConverterWidget: React.FC = () => {
 
         <View style={{ flex: 1, gap: 4 }}>
           <AppText variant="caption" color={colors.grayscale[400]}>
-            Resultado ({toCurrency})
+            {t.expenses.result} ({toCurrency})
           </AppText>
           <View
             style={{
@@ -218,11 +220,10 @@ export const CurrencyConverterWidget: React.FC = () => {
         >
           <RefreshCw size={11} color={colors.adventure.emerald} />
           <AppText variant="footnote" color={colors.adventure.emerald}>
-            {state.isOfflineMode ? "Cache Offline" : "Buscar Online"}
+            {state.isOfflineMode ? t.expenses.cacheOffline : t.expenses.fetchOnline}
           </AppText>
         </TouchableOpacity>
       </View>
     </Card>
   );
 };
-

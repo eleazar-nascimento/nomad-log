@@ -33,6 +33,8 @@ interface AppContextValue {
     totalWeightKg: number;
   };
   isPro: boolean;
+  locale: "pt" | "en";
+  setLocale: (l: "pt" | "en") => void;
 
   // Actions
   addExpense: (expense: {
@@ -187,6 +189,8 @@ export function useAppStore(): AppContextValue {
     budgetUsagePercent,
     packingProgress,
     isPro,
+    locale: store.locale || "pt",
+    setLocale: store.setLocale,
     addExpense: store.addExpense,
     deleteExpense: store.deleteExpense,
     addWaypoint: store.addWaypoint,

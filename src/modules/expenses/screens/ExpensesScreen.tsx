@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { View, ScrollView, TouchableOpacity } from "react-native";
-import { Plus, Receipt, Wallet, Filter, Coins } from "lucide-react-native";
-import { colors, radii } from "@/theme";
+import { View, ScrollView } from "react-native";
+import { Plus, Receipt, Coins } from "lucide-react-native";
+import { colors } from "@/theme";
 import { AppText, Button, Card, OfflineBanner, AnimatedContainer, AnimatedNumber } from "@/components/ui";
 import { TopHeader } from "@/components/layout";
 import { CurrencyConverterWidget } from "../components/CurrencyConverterWidget";
@@ -9,6 +9,7 @@ import { ExpenseCategoryBar } from "../components/ExpenseCategoryBar";
 import { ExpenseItemRow } from "../components/ExpenseItemRow";
 import { QuickExpenseModal } from "@/modules/dashboard/components/QuickExpenseModal";
 import { useAppStore, formatMoney } from "@/store";
+import { useTranslation } from "@/i18n";
 
 export const ExpensesScreen: React.FC<{
   onOpenTripModal: () => void;
@@ -16,6 +17,7 @@ export const ExpensesScreen: React.FC<{
 }> = ({ onOpenTripModal, onOpenProModal }) => {
   const { activeTrip, activeTripExpenses, totalSpentBase, remainingBudgetBase } =
     useAppStore();
+  const { t } = useTranslation();
   const [modalOpen, setModalOpen] = useState(false);
 
   if (!activeTrip) return null;
@@ -49,7 +51,7 @@ export const ExpensesScreen: React.FC<{
           >
             <View style={{ gap: 2 }}>
               <AppText variant="caption" color={colors.adventure.amber}>
-                Total Gasto na Viagem
+                {t.expenses.totalSpentTitle}
               </AppText>
               <AnimatedNumber
                 value={totalSpentBase}
@@ -58,12 +60,12 @@ export const ExpensesScreen: React.FC<{
                 style={{ fontWeight: "700" }}
               />
               <AppText variant="footnote" color={colors.grayscale[300]}>
-                Saldo restante: {formatMoney(remainingBudgetBase, activeTrip.baseCurrency)}
+                {t.expenses.remainingBalance}: {formatMoney(remainingBudgetBase, activeTrip.baseCurrency)}
               </AppText>
             </View>
 
             <Button
-              title="Lançar Gasto"
+              title={t.dashboard.logExpense}
               variant="primary"
               size="sm"
               onPress={() => setModalOpen(true)}
@@ -95,11 +97,11 @@ export const ExpensesScreen: React.FC<{
               <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                 <Receipt size={16} color={colors.primary[100]} />
                 <AppText variant="headline" style={{ fontWeight: "700" }}>
-                  Histórico de Gastos ({activeTripExpenses.length})
+                  {t.expenses.expenseHistory} ({activeTripExpenses.length})
                 </AppText>
               </View>
               <AppText variant="caption" color={colors.grayscale[300]}>
-                Armazenado localmente
+                {t.expenses.storedLocally}
               </AppText>
             </View>
 
@@ -107,7 +109,7 @@ export const ExpensesScreen: React.FC<{
               <Card variant="surface" style={{ padding: 24, alignItems: "center", gap: 6 }}>
                 <Coins size={24} color={colors.grayscale[400]} />
                 <AppText variant="subheadline" color={colors.grayscale[300]}>
-                  Nenhum gasto registrado nesta viagem.
+                  {t.expenses.noExpenses}
                 </AppText>
               </Card>
             ) : (

@@ -4,11 +4,14 @@ import { MapPin, Calendar, Compass, ArrowUpRight } from "lucide-react-native";
 import { colors, radii } from "@/theme";
 import { AppText, Badge } from "@/components/ui";
 import { Trip } from "@/store";
+import { useTranslation } from "@/i18n";
 
 export const TripOverviewCard: React.FC<{
   trip: Trip;
   onPress?: () => void;
 }> = ({ trip, onPress }) => {
+  const { t, isPt } = useTranslation();
+
   // Calcula duração e dias restantes
   const start = new Date(trip.startDate);
   const end = new Date(trip.endDate);
@@ -16,6 +19,10 @@ export const TripOverviewCard: React.FC<{
     1,
     Math.round((end.getTime() - start.getTime()) / (1000 * 3600 * 24))
   );
+
+  const daysLabel = diffDays === 1
+    ? (isPt ? "1 dia" : "1 day")
+    : `${diffDays} ${isPt ? "dias" : "days"}`;
 
   return (
     <TouchableOpacity
@@ -62,7 +69,7 @@ export const TripOverviewCard: React.FC<{
             ))}
           </View>
           <Badge
-            label={`${diffDays} dias`}
+            label={daysLabel}
             variant="primary"
             size="sm"
             icon={<Calendar size={11} color={colors.primary[100]} />}
@@ -107,7 +114,7 @@ export const TripOverviewCard: React.FC<{
       >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           <AppText variant="caption" color={colors.grayscale[300]}>
-            Moedas ativas:
+            {t.dashboard.activeCurrencies}
           </AppText>
           <View style={{ flexDirection: "row", gap: 6 }}>
             {trip.localCurrencies.map((cur) => (
@@ -136,7 +143,7 @@ export const TripOverviewCard: React.FC<{
 
         <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
           <AppText variant="caption" color={colors.primary[100]}>
-            Ver detalhes
+            {t.dashboard.viewDetails}
           </AppText>
           <ArrowUpRight size={13} color={colors.primary[100]} />
         </View>

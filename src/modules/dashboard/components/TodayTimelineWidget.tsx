@@ -12,11 +12,13 @@ import {
 import { colors, radii } from "@/theme";
 import { AppText, Card, Badge } from "@/components/ui";
 import { useAppStore, Waypoint } from "@/store";
+import { useTranslation } from "@/i18n";
 
 export const TodayTimelineWidget: React.FC<{
   onViewItineraryPress?: () => void;
 }> = ({ onViewItineraryPress }) => {
   const { activeTripWaypoints, toggleWaypointStatus } = useAppStore();
+  const { t } = useTranslation();
 
   // Pega os 3 primeiros waypoints pendentes ou em andamento
   const upcomingWaypoints = activeTripWaypoints.slice(0, 3);
@@ -58,10 +60,10 @@ export const TodayTimelineWidget: React.FC<{
           </View>
           <View>
             <AppText variant="headline" style={{ fontWeight: "700" }}>
-              Cronograma da Viagem
+              {t.dashboard.todaySchedule}
             </AppText>
             <AppText variant="caption" color={colors.grayscale[300]}>
-              Pontos de parada & trilhas offline
+              {t.dashboard.stopsAndTrails}
             </AppText>
           </View>
         </View>
@@ -72,7 +74,7 @@ export const TodayTimelineWidget: React.FC<{
           style={{ flexDirection: "row", alignItems: "center", gap: 3 }}
         >
           <AppText variant="caption" color={colors.primary[100]}>
-            Roteiro completo
+            {t.dashboard.fullItinerary}
           </AppText>
           <ArrowRight size={12} color={colors.primary[100]} />
         </TouchableOpacity>

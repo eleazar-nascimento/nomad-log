@@ -1,18 +1,20 @@
 import React, { useState } from "react";
-import { View, ScrollView, TouchableOpacity } from "react-native";
-import { Plus, BookOpen, Sparkles, Camera } from "lucide-react-native";
-import { colors, radii } from "@/theme";
+import { View, ScrollView } from "react-native";
+import { Plus, BookOpen, Camera } from "lucide-react-native";
+import { colors } from "@/theme";
 import { AppText, Button, Card, OfflineBanner, AnimatedContainer } from "@/components/ui";
 import { TopHeader } from "@/components/layout";
 import { JournalCard } from "../components/JournalCard";
 import { NewJournalModal } from "../components/NewJournalModal";
 import { useAppStore } from "@/store";
+import { useTranslation } from "@/i18n";
 
 export const JournalScreen: React.FC<{
   onOpenTripModal: () => void;
   onOpenProModal: () => void;
 }> = ({ onOpenTripModal, onOpenProModal }) => {
   const { activeTrip, activeTripJournal } = useAppStore();
+  const { t } = useTranslation();
   const [modalOpen, setModalOpen] = useState(false);
 
   if (!activeTrip) return null;
@@ -49,16 +51,16 @@ export const JournalScreen: React.FC<{
               <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                 <BookOpen size={16} color={colors.primary[100]} />
                 <AppText variant="headline" style={{ fontWeight: "700" }}>
-                  Diário de Bordo & Histórias
+                  {t.journal.bannerTitle}
                 </AppText>
               </View>
               <AppText variant="caption" color={colors.grayscale[300]}>
-                {activeTripJournal.length} memórias registradas 100% offline
+                {activeTripJournal.length} {t.journal.offlineMemories}
               </AppText>
             </View>
 
             <Button
-              title="Nova Nota"
+              title={t.journal.newNote}
               variant="primary"
               size="sm"
               onPress={() => setModalOpen(true)}
@@ -75,15 +77,14 @@ export const JournalScreen: React.FC<{
           >
             <Camera size={32} color={colors.grayscale[400]} />
             <AppText variant="subheadline" style={{ fontWeight: "600" }}>
-              Nenhuma memória escrita ainda
+              {t.journal.noMemories}
             </AppText>
             <AppText
               variant="footnote"
               color={colors.grayscale[300]}
               align="center"
             >
-              Guarde os momentos mais marcantes da sua jornada sem precisar de
-              conexão com a internet.
+              {t.journal.noMemoriesDesc}
             </AppText>
           </Card>
         ) : (

@@ -437,6 +437,7 @@ export function createInitialState(): NomadPersistedState {
 
   return {
     version: 1,
+    locale: "pt",
     subscription: {
       plan: "free",
       unlimitedTrips: false,

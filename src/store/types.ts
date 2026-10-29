@@ -137,6 +137,7 @@ export interface UserSubscription {
 
 export interface NomadPersistedState {
   version: number;
+  locale: "pt" | "en";
   subscription: UserSubscription;
   activeTripId: string;
   trips: Trip[];

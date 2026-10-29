@@ -4,6 +4,7 @@ import { Wallet, Plus, TrendingDown, ArrowRight } from "lucide-react-native";
 import { colors, radii } from "@/theme";
 import { AppText, Card, Badge, AnimatedNumber } from "@/components/ui";
 import { useAppStore, formatMoney } from "@/store";
+import { useTranslation } from "@/i18n";
 
 export const DailyBudgetCard: React.FC<{
   onAddExpensePress?: () => void;
@@ -15,6 +16,7 @@ export const DailyBudgetCard: React.FC<{
     remainingBudgetBase,
     budgetUsagePercent,
   } = useAppStore();
+  const { t, isPt } = useTranslation();
 
   if (!activeTrip) return null;
 
@@ -58,10 +60,10 @@ export const DailyBudgetCard: React.FC<{
           </View>
           <View>
             <AppText variant="headline" style={{ fontWeight: "700" }}>
-              Orçamento de Viagem
+              {t.dashboard.tripBudget}
             </AppText>
             <AppText variant="caption" color={colors.grayscale[300]}>
-              Meta: {formatMoney(activeTrip.dailyBudgetBase, activeTrip.baseCurrency)} / dia
+              {t.dashboard.dailyTarget}: {formatMoney(activeTrip.dailyBudgetBase, activeTrip.baseCurrency)} {isPt ? "/ dia" : "/ day"}
             </AppText>
           </View>
         </View>
@@ -85,7 +87,7 @@ export const DailyBudgetCard: React.FC<{
             color={colors.grayscale[100]}
             style={{ fontWeight: "700" }}
           >
-            Lançar
+            {t.dashboard.logExpense}
           </AppText>
         </TouchableOpacity>
       </View>
@@ -101,7 +103,7 @@ export const DailyBudgetCard: React.FC<{
       >
         <View style={{ gap: 2 }}>
           <AppText variant="caption" color={colors.grayscale[300]}>
-            Total Gasto ({activeTrip.baseCurrency})
+            {t.dashboard.totalSpent} ({activeTrip.baseCurrency})
           </AppText>
           <AnimatedNumber
             value={totalSpentBase}
@@ -113,7 +115,7 @@ export const DailyBudgetCard: React.FC<{
 
         <View style={{ alignItems: "flex-end", gap: 2 }}>
           <AppText variant="caption" color={colors.grayscale[300]}>
-            Saldo Restante
+            {t.dashboard.remainingBalance}
           </AppText>
           <AppText
             variant="title3"
@@ -153,7 +155,7 @@ export const DailyBudgetCard: React.FC<{
           }}
         >
           <AppText variant="footnote" color={colors.grayscale[300]}>
-            {budgetUsagePercent}% do teto ({formatMoney(activeTrip.totalBudgetBase, activeTrip.baseCurrency)})
+            {budgetUsagePercent}% {t.dashboard.budgetConsumed} ({formatMoney(activeTrip.totalBudgetBase, activeTrip.baseCurrency)})
           </AppText>
           <TouchableOpacity
             onPress={onViewAllExpensesPress}
@@ -161,7 +163,7 @@ export const DailyBudgetCard: React.FC<{
             style={{ flexDirection: "row", alignItems: "center", gap: 3 }}
           >
             <AppText variant="footnote" color={colors.primary[100]}>
-              Extrato & Câmbio
+              {t.dashboard.statementAndFx}
             </AppText>
             <ArrowRight size={11} color={colors.primary[100]} />
           </TouchableOpacity>

@@ -3,7 +3,7 @@ import { View, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { CheckSquare, ArrowRight } from "lucide-react-native";
 import { colors, radii } from "@/theme";
-import { AppText, Card, CircularProgress, OfflineBanner } from "@/components/ui";
+import { AppText, Card, CircularProgress, OfflineBanner, AnimatedContainer } from "@/components/ui";
 import { TopHeader } from "@/components/layout";
 import { TripOverviewCard } from "../components/TripOverviewCard";
 import { DailyBudgetCard } from "../components/DailyBudgetCard";
@@ -38,57 +38,65 @@ export const DashboardScreen: React.FC<{
         showsVerticalScrollIndicator={false}
       >
         {/* Card Principal da Viagem */}
-        <TripOverviewCard
-          trip={activeTrip}
-          onPress={() => router.push("/(tabs)/itinerary" as any)}
-        />
+        <AnimatedContainer delay={50}>
+          <TripOverviewCard
+            trip={activeTrip}
+            onPress={() => router.push("/(tabs)/itinerary" as any)}
+          />
+        </AnimatedContainer>
 
         {/* Orçamento e Despesas Offline */}
-        <DailyBudgetCard
-          onAddExpensePress={() => setQuickExpenseOpen(true)}
-          onViewAllExpensesPress={() => router.push("/(tabs)/expenses" as any)}
-        />
+        <AnimatedContainer delay={120}>
+          <DailyBudgetCard
+            onAddExpensePress={() => setQuickExpenseOpen(true)}
+            onViewAllExpensesPress={() => router.push("/(tabs)/expenses" as any)}
+          />
+        </AnimatedContainer>
 
         {/* Resumo Circular da Mochila (Inspirado no Figma Daily Routine) */}
-        <Card
-          variant="surface"
-          onPress={() => router.push("/(tabs)/packing" as any)}
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: 16,
-            borderColor: colors.grayscale[500],
-          }}
-        >
-          <View style={{ flex: 1, gap: 4 }}>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-              <CheckSquare size={16} color={colors.primary[100]} />
-              <AppText variant="headline" style={{ fontWeight: "700" }}>
-                Checklist de Bagagem
+        <AnimatedContainer delay={190}>
+          <Card
+            variant="surface"
+            onPress={() => router.push("/(tabs)/packing" as any)}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: 16,
+              borderColor: colors.grayscale[500],
+            }}
+          >
+            <View style={{ flex: 1, gap: 4 }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                <CheckSquare size={16} color={colors.primary[100]} />
+                <AppText variant="headline" style={{ fontWeight: "700" }}>
+                  Checklist de Bagagem
+                </AppText>
+              </View>
+              <AppText variant="caption" color={colors.grayscale[300]}>
+                {packingProgress.packed} de {packingProgress.total} itens checados
+              </AppText>
+              <AppText variant="caption" color={colors.adventure.sky}>
+                Peso estimado na balança: {packingProgress.totalWeightKg} kg
               </AppText>
             </View>
-            <AppText variant="caption" color={colors.grayscale[300]}>
-              {packingProgress.packed} de {packingProgress.total} itens checados
-            </AppText>
-            <AppText variant="caption" color={colors.adventure.sky}>
-              Peso estimado na balança: {packingProgress.totalWeightKg} kg
-            </AppText>
-          </View>
 
-          <CircularProgress
-            size={74}
-            strokeWidth={7}
-            progress={packingProgress.percentage}
-            color={colors.adventure.emerald}
-            trackColor={colors.grayscale[500]}
-          />
-        </Card>
+            <CircularProgress
+              size={74}
+              strokeWidth={7}
+              progress={packingProgress.percentage}
+              color={colors.adventure.emerald}
+              trackColor={colors.grayscale[500]}
+            />
+          </Card>
+        </AnimatedContainer>
 
         {/* Cronograma do Dia */}
-        <TodayTimelineWidget
-          onViewItineraryPress={() => router.push("/(tabs)/itinerary" as any)}
-        />
+        <AnimatedContainer delay={260}>
+          <TodayTimelineWidget
+            onViewItineraryPress={() => router.push("/(tabs)/itinerary" as any)}
+          />
+        </AnimatedContainer>
       </ScrollView>
 
       {/* Modal Rápido de Despesa */}

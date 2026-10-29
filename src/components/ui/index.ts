@@ -6,4 +6,6 @@ export * from "./Badge";
 export * from "./CircularProgress";
 export * from "./OfflineBanner";
 export * from "./DeviceChrome";
+export * from "./AnimatedContainer";
+export * from "./AnimatedNumber";
 

@@ -2,7 +2,7 @@ import React from "react";
 import { View, TouchableOpacity } from "react-native";
 import { Wallet, Plus, TrendingDown, ArrowRight } from "lucide-react-native";
 import { colors, radii } from "@/theme";
-import { AppText, Card, Badge } from "@/components/ui";
+import { AppText, Card, Badge, AnimatedNumber } from "@/components/ui";
 import { useAppStore, formatMoney } from "@/store";
 
 export const DailyBudgetCard: React.FC<{
@@ -103,9 +103,12 @@ export const DailyBudgetCard: React.FC<{
           <AppText variant="caption" color={colors.grayscale[300]}>
             Total Gasto ({activeTrip.baseCurrency})
           </AppText>
-          <AppText variant="title1" style={{ fontWeight: "700" }}>
-            {formatMoney(totalSpentBase, activeTrip.baseCurrency)}
-          </AppText>
+          <AnimatedNumber
+            value={totalSpentBase}
+            prefix={activeTrip.baseCurrency === "BRL" ? "R$ " : "$ "}
+            variant="title1"
+            style={{ fontWeight: "700" }}
+          />
         </View>
 
         <View style={{ alignItems: "flex-end", gap: 2 }}>

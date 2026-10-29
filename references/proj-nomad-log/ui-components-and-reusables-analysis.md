@@ -53,6 +53,13 @@ Se o projeto no futuro demandar componentes headless de alta complexidade acess�
 
 ---
 
+## 🏝️ Resolução de Safe Areas e Dynamic Island (iPhone 14/15/16 Pro)
+
+Para evitar sobreposição entre o entalhe físico do aparelho (Dynamic Island) e o cabeçalho:
+1. **Em Dispositivos Reais:** O componente [`TopHeader.tsx`](file:///Volumes/crucial-x9/ideias/nomad-log/src/components/layout/TopHeader.tsx) consome `useSafeAreaInsets()` do `react-native-safe-area-context`, aplicando `paddingTop: Math.max(insets.top + 4, 16)`. No iPhone 15/16 Pro com Dynamic Island, `insets.top` é 54px, garantindo que o título e os botões iniciem estritamente abaixo da cápsula.
+2. **Na Moldura Web Desktop (`DeviceFrame`):** A barra de status simulada possui `height: 48` fixa com relógio, cápsula e ícones de sinal/bateria, empurrando o conteúdo para baixo e eliminando qualquer corte visual.
+3. **Truncamento de Texto:** O título da viagem possui `numberOfLines={1}` e `ellipsizeMode="tail"` com `flexShrink: 1` para não disputar espaço com o botão Pro.
+
 ## 🔗 Referências Cruzadas
 - [[_project]] ➡️ MOC do Projeto.
 - [[animations-and-microinteractions]] ➡️ Integração com animações Reanimated.

@@ -33,6 +33,20 @@ export const SideControlPanel: React.FC<{
 
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
+  const [refreshingRates, setRefreshingRates] = useState(false);
+  const [ratesMsg, setRatesMsg] = useState<string | null>(null);
+
+  const handleRefreshFx = async () => {
+    setRefreshingRates(true);
+    setRatesMsg(null);
+    try {
+      await refreshFxRates();
+      setRatesMsg("Cotações atualizadas com sucesso!");
+    } finally {
+      setRefreshingRates(false);
+      setTimeout(() => setRatesMsg(null), 3000);
+    }
+  };
 
   const handleSync = async () => {
     setSyncing(true);
@@ -190,8 +204,9 @@ export const SideControlPanel: React.FC<{
         </AppText>
 
         <TouchableOpacity
-          onPress={refreshFxRates}
+          onPress={handleRefreshFx}
           activeOpacity={0.8}
+          disabled={refreshingRates}
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -204,11 +219,21 @@ export const SideControlPanel: React.FC<{
             borderColor: colors.grayscale[500],
           }}
         >
-          <RefreshCw size={12} color={colors.adventure.amber} />
+          <RefreshCw
+            size={12}
+            color={colors.adventure.amber}
+          />
           <AppText variant="caption" color={colors.adventure.amber}>
-            Atualizar Snapshot de Cotações
+            {refreshingRates
+              ? "Buscando da API de Câmbio..."
+              : "Atualizar Snapshot de Cotações"}
           </AppText>
         </TouchableOpacity>
+        {ratesMsg && (
+          <AppText variant="footnote" color={colors.adventure.emerald}>
+            ✓ {ratesMsg}
+          </AppText>
+        )}
       </Card>
 
       {/* Plano Freemium vs Mochileiro Pro */}

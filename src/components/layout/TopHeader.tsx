@@ -1,8 +1,10 @@
 import React from "react";
-import { View, TouchableOpacity } from "react-native";
-import { Compass, Sparkles, ChevronDown, Crown } from "lucide-react-native";
+import { View, TouchableOpacity, Platform } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Compass, ChevronDown, Crown } from "lucide-react-native";
 import { colors, radii } from "@/theme";
-import { AppText, Badge } from "@/components/ui";
+import { AppText } from "@/components/ui";
+import { useDeviceChrome } from "@/components/ui/DeviceChrome";
 import { useAppStore } from "@/store";
 
 export const TopHeader: React.FC<{
@@ -10,6 +12,15 @@ export const TopHeader: React.FC<{
   onOpenProModal?: () => void;
 }> = ({ onOpenTripManager, onOpenProModal }) => {
   const { activeTrip, isPro } = useAppStore();
+  const insets = useSafeAreaInsets();
+  const isFramedWeb = useDeviceChrome();
+
+  // Em celulares físicos (iOS com Dynamic Island / Notch ou Android com punch hole),
+  // respeitamos o topo seguro do sistema. No modo mockup web desktop, a moldura já
+  // desenha a barra de status dedicada de 52px.
+  const safeTopPadding = isFramedWeb
+    ? 10
+    : Math.max(insets.top > 0 ? insets.top + 4 : (Platform.OS === "ios" ? 54 : 32), 16);
 
   return (
     <View
@@ -18,15 +29,21 @@ export const TopHeader: React.FC<{
         alignItems: "center",
         justifyContent: "space-between",
         paddingHorizontal: 16,
-        paddingTop: 8,
-        paddingBottom: 10,
+        paddingTop: safeTopPadding,
+        paddingBottom: 12,
         backgroundColor: colors.grayscale[700],
       }}
     >
       <TouchableOpacity
         activeOpacity={0.8}
         onPress={onOpenTripManager}
-        style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1 }}
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 10,
+          flex: 1,
+          marginRight: 10,
+        }}
       >
         <View
           style={{
@@ -43,12 +60,13 @@ export const TopHeader: React.FC<{
           <Compass size={20} color={colors.primary[100]} />
         </View>
 
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginRight: 8, justifyContent: "center" }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
             <AppText
               variant="headline"
               numberOfLines={1}
-              style={{ fontWeight: "700" }}
+              ellipsizeMode="tail"
+              style={{ fontWeight: "700", flexShrink: 1 }}
             >
               {activeTrip?.title || "Minha Viagem"}
             </AppText>
@@ -58,6 +76,7 @@ export const TopHeader: React.FC<{
             variant="caption"
             color={colors.grayscale[300]}
             numberOfLines={1}
+            ellipsizeMode="tail"
           >
             {activeTrip?.destination || "Destino remoto"} • Base: {activeTrip?.baseCurrency}
           </AppText>
@@ -79,8 +98,9 @@ export const TopHeader: React.FC<{
             ? "rgba(245, 158, 11, 0.4)"
             : "rgba(255, 104, 56, 0.3)",
           paddingHorizontal: 10,
-          paddingVertical: 5,
+          paddingVertical: 6,
           borderRadius: radii.pill,
+          alignSelf: "center",
         }}
       >
         <Crown
@@ -92,7 +112,7 @@ export const TopHeader: React.FC<{
           color={isPro ? colors.adventure.amber : colors.primary[100]}
           style={{ fontWeight: "700" }}
         >
-          {isPro ? "PRO ATIVO" : "PRO"}
+          {isPro ? "PRO" : "PRO"}
         </AppText>
       </TouchableOpacity>
     </View>

@@ -12,7 +12,7 @@ import {
 } from "@/store";
 
 export const CurrencyConverterWidget: React.FC = () => {
-  const { state, activeTrip } = useAppStore();
+  const { state, activeTrip, refreshFxRates } = useAppStore();
 
   const [fromCurrency, setFromCurrency] = useState<CurrencyCode>(
     activeTrip?.localCurrencies[0] || "THB"
@@ -209,11 +209,18 @@ export const CurrencyConverterWidget: React.FC = () => {
         }}
       >
         <AppText variant="footnote" color={colors.grayscale[300]}>
-          Taxa congelada: 1 {fromCurrency} = {unitRate.toFixed(4)} {toCurrency}
+          1 {fromCurrency} = {unitRate.toFixed(4)} {toCurrency}
         </AppText>
-        <AppText variant="footnote" color={colors.adventure.emerald}>
-          ✓ Sem conexão
-        </AppText>
+        <TouchableOpacity
+          onPress={() => refreshFxRates()}
+          activeOpacity={0.7}
+          style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
+        >
+          <RefreshCw size={11} color={colors.adventure.emerald} />
+          <AppText variant="footnote" color={colors.adventure.emerald}>
+            {state.isOfflineMode ? "Cache Offline" : "Buscar Online"}
+          </AppText>
+        </TouchableOpacity>
       </View>
     </Card>
   );

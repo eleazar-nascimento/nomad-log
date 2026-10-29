@@ -54,6 +54,13 @@ Localizado em [`src/store/currencies.ts`](file:///Volumes/crucial-x9/ideias/noma
 
 ---
 
+## 🌐 Integração com API Pública de Câmbio (Stale-While-Revalidate)
+
+Quando o usuário está conectado à internet, o app executa em segundo plano a sincronização através do serviço [`src/services/fxApi.ts`](file:///Volumes/crucial-x9/ideias/nomad-log/src/services/fxApi.ts):
+- **Endpoint:** `https://open.er-api.com/v6/latest/USD`
+- **Timeout Proativo:** 4.000ms com `AbortController` para evitar que conexões fracas de roaming travem a UI.
+- **Resiliência Offline:** Se houver erro de rede, queda de DNS ou modo avião, a função intercepta a falha graciosamente e continua operando com o cache congelado sem lançar erros não tratados.
+
 ## ⚙️ Tratamento de Moedas de Alta Denominação
 Moedas como **Dong Vietnamita (VND)** e **Peso Chileno (CLP)** não usam casas decimais fracionárias no cotidiano. O utilitário `formatMoney()` detecta automaticamente a moeda e formata sem centavos espúrios para maior legibilidade.
 

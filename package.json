@@ -7,6 +7,9 @@
     "android": "TMPDIR=/tmp expo start --android",
     "ios": "TMPDIR=/tmp expo start --ios",
     "web": "TMPDIR=/tmp expo start --web",
+    "build:apk": "EAS_BUILD_SKIP_LOCKFILE_CHECK=1 npx eas-cli build --platform android --profile preview",
+    "build:aab": "EAS_BUILD_SKIP_LOCKFILE_CHECK=1 npx eas-cli build --platform android --profile production",
+    "build:ios": "EAS_BUILD_SKIP_LOCKFILE_CHECK=1 npx eas-cli build --platform ios --profile preview",
     "lint": "expo lint"
   },
   "dependencies": {

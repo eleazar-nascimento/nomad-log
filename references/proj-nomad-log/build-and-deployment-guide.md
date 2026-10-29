@@ -25,9 +25,15 @@ O **EAS (Expo Application Services)** compila seu aplicativo em servidores na nu
 O arquivo [`eas.json`](file:///Volumes/crucial-x9/ideias/nomad-log/eas.json) já está configurado na raiz do projeto com o pacote `com.nomadlog.app`.
 
 ### 1. Pré-requisitos (Única vez)
-Crie uma conta gratuita em [expo.dev](https://expo.dev) e faça login no terminal:
+
+Gere o lockfile de dependências (`package-lock.json`):
 ```bash
 cd nomad-log
+npm install
+```
+
+Crie uma conta gratuita em [expo.dev](https://expo.dev) e faça login no terminal:
+```bash
 npx eas-cli login
 ```
 
@@ -43,11 +49,19 @@ npx eas-cli project:init
 ### Opção A: Gerar APK Instalável Direto (Para testar no celular ou mandar para amigos)
 Este comando gera um arquivo **`.apk`** pronto. Ao terminar, a Expo fornece um link e um QR Code para você baixar e instalar diretamente no Android:
 ```bash
-npx eas-cli build --platform android --profile preview
+# Via script npm configurado no package.json:
+npm run build:apk
+
+# Ou comando direto do EAS:
+EAS_BUILD_SKIP_LOCKFILE_CHECK=1 npx eas-cli build --platform android --profile preview
 ```
+
+> **Dica (Lockfile):** Se você ainda não gerou o `package-lock.json`, a flag `EAS_BUILD_SKIP_LOCKFILE_CHECK=1` acima pula essa verificação e compila imediatamente.
 
 ### Opção B: Gerar AAB (Para publicar na Google Play Console)
 ```bash
+npm run build:aab
+# ou
 npx eas-cli build --platform android --profile production
 ```
 

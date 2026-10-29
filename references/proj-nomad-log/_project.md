@@ -32,6 +32,7 @@ token_density:
 | **Domínio Financeiro** | [[domain-multi-currency-and-fx]] | Conversor multimoedas offline e snapshot de câmbio |
 | **Monetização & Negócio**| [[monetization-and-freemium]] | Modelo Freemium e pacote Mochileiro Pro |
 | **Marketing & Go-To-Market**| [[marketing-and-go-to-market]] | Estratégia de aquisição, TikTok/Reels e PLG |
+| **Geração de Builds (APK/IPA)**| [[build-and-deployment-guide]] | Guia passo a passo de compilação EAS & Local |
 | **Status & Roadmap** | [[status-and-roadmap]] | Entregas concluídas e próximos passos |
 
 ---

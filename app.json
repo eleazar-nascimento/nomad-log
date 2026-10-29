@@ -9,9 +9,11 @@
     "newArchEnabled": true,
     "icon": "./public/icon.png",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nomadlog.app"
     },
     "android": {
+      "package": "com.nomadlog.app",
       "adaptiveIcon": {
         "backgroundColor": "#0F1115",
         "foregroundImage": "./public/icon.png"

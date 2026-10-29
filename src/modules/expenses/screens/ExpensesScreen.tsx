@@ -17,7 +17,7 @@ export const ExpensesScreen: React.FC<{
 }> = ({ onOpenTripModal, onOpenProModal }) => {
   const { activeTrip, activeTripExpenses, totalSpentBase, remainingBudgetBase } =
     useAppStore();
-  const { t } = useTranslation();
+  const { t, isPt } = useTranslation();
   const [modalOpen, setModalOpen] = useState(false);
 
   if (!activeTrip) return null;
@@ -49,7 +49,7 @@ export const ExpensesScreen: React.FC<{
               padding: 16,
             }}
           >
-            <View style={{ gap: 2 }}>
+            <View style={{ gap: 2, flex: 1, minWidth: 0, marginRight: 10 }}>
               <AppText variant="caption" color={colors.adventure.amber}>
                 {t.expenses.totalSpentTitle}
               </AppText>
@@ -59,15 +59,21 @@ export const ExpensesScreen: React.FC<{
                 variant="title1"
                 style={{ fontWeight: "700" }}
               />
-              <AppText variant="footnote" color={colors.grayscale[300]}>
+              <AppText
+                variant="footnote"
+                color={colors.grayscale[300]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
                 {t.expenses.remainingBalance}: {formatMoney(remainingBudgetBase, activeTrip.baseCurrency)}
               </AppText>
             </View>
 
             <Button
-              title={t.dashboard.logExpense}
+              title={isPt ? "+ Novo Gasto" : "+ Expense"}
               variant="primary"
               size="sm"
+              style={{ flexShrink: 0 }}
               onPress={() => setModalOpen(true)}
               icon={<Plus size={14} color={colors.grayscale[100]} />}
             />

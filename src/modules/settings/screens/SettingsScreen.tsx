@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, ScrollView, TouchableOpacity, Alert, Platform } from "react-native";
+import { View, ScrollView, TouchableOpacity, Alert, Platform, Modal, Share } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -18,6 +18,11 @@ import {
   ShieldCheck,
   Coins,
   Sparkles,
+  Share2,
+  Download,
+  Eye,
+  X,
+  Check,
 } from "lucide-react-native";
 import { colors, radii } from "@/theme";
 import { AppText, Card, Badge, Button, AnimatedContainer } from "@/components/ui";
@@ -73,6 +78,8 @@ export const SettingsScreen: React.FC<{
   const [syncing, setSyncing] = useState(false);
   const [refreshingFx, setRefreshingFx] = useState(false);
   const [showSplashPreview, setShowSplashPreview] = useState(false);
+  const [reportModalVisible, setReportModalVisible] = useState(false);
+  const [reportContent, setReportContent] = useState("");
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -80,29 +87,25 @@ export const SettingsScreen: React.FC<{
   };
 
   const handleExportCSV = async () => {
-    if (!isPro) {
-      onOpenProModal();
-      return;
-    }
     if (!activeTrip) return;
     const csv = generateExpensesCSV(activeTripExpenses, activeTrip.baseCurrency);
+    const safeTripName = (activeTrip.destination || "viagem")
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "_");
+    const filename = `despesas_${safeTripName}.csv`;
     const success = await triggerFileExport(
       csv,
-      `despesas_${activeTrip.id}.csv`,
+      filename,
       "text/csv"
     );
     showToast(
       success
-        ? t.settings.exportSuccessToast
+        ? (isPt ? "✓ Arquivo CSV exportado com sucesso!" : "✓ CSV file exported successfully!")
         : t.settings.copiedToast
     );
   };
 
   const handleExportJSON = async () => {
-    if (!isPro) {
-      onOpenProModal();
-      return;
-    }
     if (!activeTrip) return;
     const json = generateTripJSON(
       activeTrip,
@@ -111,23 +114,23 @@ export const SettingsScreen: React.FC<{
       activeTripJournal,
       activeTripPacking
     );
+    const safeTripName = (activeTrip.destination || "viagem")
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "_");
+    const filename = `backup_nomadlog_${safeTripName}.json`;
     const success = await triggerFileExport(
       json,
-      `backup_${activeTrip.id}.json`,
+      filename,
       "application/json"
     );
     showToast(
       success
-        ? t.settings.exportSuccessToast
+        ? (isPt ? "✓ Backup completo exportado com sucesso!" : "✓ Complete backup exported successfully!")
         : t.settings.copiedToast
     );
   };
 
-  const handleExportReport = async () => {
-    if (!isPro) {
-      onOpenProModal();
-      return;
-    }
+  const handleOpenReport = () => {
     if (!activeTrip) return;
     const report = generateTripMarkdownReport(
       activeTrip,
@@ -137,16 +140,43 @@ export const SettingsScreen: React.FC<{
       activeTripPacking,
       locale
     );
+    setReportContent(report);
+    setReportModalVisible(true);
+  };
+
+  const handleShareReportFile = async () => {
+    if (!activeTrip || !reportContent) return;
+    const safeTripName = (activeTrip.destination || "viagem")
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "_");
+    const filename = `relatorio_${safeTripName}.md`;
     const success = await triggerFileExport(
-      report,
-      `relatorio_${activeTrip.id}.md`,
+      reportContent,
+      filename,
       "text/markdown"
     );
     showToast(
       success
-        ? t.settings.exportSuccessToast
+        ? (isPt ? "✓ Relatório exportado com sucesso!" : "✓ Report exported successfully!")
         : t.settings.copiedToast
     );
+  };
+
+  const handleShareReportText = async () => {
+    if (!reportContent) return;
+    try {
+      if (Platform.OS === "web" && typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(reportContent);
+        showToast(isPt ? "✓ Relatório copiado para a área de transferência!" : "✓ Report copied to clipboard!");
+        return;
+      }
+      await Share.share({
+        message: reportContent,
+        title: activeTrip?.title || "NomadLog Report",
+      });
+    } catch (e) {
+      console.warn("Erro ao compartilhar texto:", e);
+    }
   };
 
   const handleSyncCloud = async () => {
@@ -508,22 +538,28 @@ export const SettingsScreen: React.FC<{
                 </View>
 
                 <View style={{ flexShrink: 0, paddingLeft: 4 }}>
-                  {isPro ? (
-                    <View
-                      style={{
-                        width: 30,
-                        height: 30,
-                        borderRadius: 15,
-                        backgroundColor: colors.grayscale[600],
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 4,
+                      backgroundColor: "rgba(16, 185, 129, 0.15)",
+                      paddingHorizontal: 10,
+                      paddingVertical: 6,
+                      borderRadius: radii.pill,
+                      borderWidth: 1,
+                      borderColor: "rgba(16, 185, 129, 0.3)",
+                    }}
+                  >
+                    <Download size={13} color={colors.adventure.emerald} />
+                    <AppText
+                      variant="caption"
+                      color={colors.adventure.emerald}
+                      style={{ fontWeight: "700" }}
                     >
-                      <Copy size={14} color={colors.grayscale[200]} />
-                    </View>
-                  ) : (
-                    <Badge label="PRO" variant="amber" size="sm" />
-                  )}
+                      CSV
+                    </AppText>
+                  </View>
                 </View>
               </TouchableOpacity>
 
@@ -568,28 +604,34 @@ export const SettingsScreen: React.FC<{
                 </View>
 
                 <View style={{ flexShrink: 0, paddingLeft: 4 }}>
-                  {isPro ? (
-                    <View
-                      style={{
-                        width: 30,
-                        height: 30,
-                        borderRadius: 15,
-                        backgroundColor: colors.grayscale[600],
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 4,
+                      backgroundColor: "rgba(56, 189, 248, 0.15)",
+                      paddingHorizontal: 10,
+                      paddingVertical: 6,
+                      borderRadius: radii.pill,
+                      borderWidth: 1,
+                      borderColor: "rgba(56, 189, 248, 0.3)",
+                    }}
+                  >
+                    <Download size={13} color={colors.adventure.sky} />
+                    <AppText
+                      variant="caption"
+                      color={colors.adventure.sky}
+                      style={{ fontWeight: "700" }}
                     >
-                      <Copy size={14} color={colors.grayscale[200]} />
-                    </View>
-                  ) : (
-                    <Badge label="PRO" variant="amber" size="sm" />
-                  )}
+                      JSON
+                    </AppText>
+                  </View>
                 </View>
               </TouchableOpacity>
 
               {/* Exportar Relatório Formatado */}
               <TouchableOpacity
-                onPress={handleExportReport}
+                onPress={handleOpenReport}
                 activeOpacity={0.8}
                 style={{
                   flexDirection: "row",
@@ -628,22 +670,28 @@ export const SettingsScreen: React.FC<{
                 </View>
 
                 <View style={{ flexShrink: 0, paddingLeft: 4 }}>
-                  {isPro ? (
-                    <View
-                      style={{
-                        width: 30,
-                        height: 30,
-                        borderRadius: 15,
-                        backgroundColor: colors.grayscale[600],
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 4,
+                      backgroundColor: "rgba(168, 85, 247, 0.15)",
+                      paddingHorizontal: 10,
+                      paddingVertical: 6,
+                      borderRadius: radii.pill,
+                      borderWidth: 1,
+                      borderColor: "rgba(168, 85, 247, 0.3)",
+                    }}
+                  >
+                    <Eye size={13} color={colors.adventure.purple} />
+                    <AppText
+                      variant="caption"
+                      color={colors.adventure.purple}
+                      style={{ fontWeight: "700" }}
                     >
-                      <Copy size={14} color={colors.grayscale[200]} />
-                    </View>
-                  ) : (
-                    <Badge label="PRO" variant="amber" size="sm" />
-                  )}
+                      {isPt ? "Ver" : "View"}
+                    </AppText>
+                  </View>
                 </View>
               </TouchableOpacity>
             </View>
@@ -844,6 +892,116 @@ export const SettingsScreen: React.FC<{
           </Card>
         </AnimatedContainer>
       </ScrollView>
+
+      {/* Modal do Relatório Formatado da Viagem */}
+      <Modal
+        visible={reportModalVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setReportModalVisible(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(3, 4, 6, 0.75)",
+            justifyContent: "flex-end",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: colors.grayscale[700],
+              borderTopLeftRadius: radii["2xl"],
+              borderTopRightRadius: radii["2xl"],
+              borderWidth: 1,
+              borderColor: colors.grayscale[500],
+              maxHeight: "90%",
+              paddingBottom: 24,
+            }}
+          >
+            {/* Header do Modal */}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                paddingHorizontal: 20,
+                paddingTop: 16,
+                paddingBottom: 12,
+                borderBottomWidth: 1,
+                borderColor: colors.grayscale[600],
+              }}
+            >
+              <View style={{ flex: 1, minWidth: 0, marginRight: 10 }}>
+                <AppText variant="headline" style={{ fontWeight: "700" }}>
+                  {isPt ? "Relatório Formatado da Viagem" : "Trip Summary Report"}
+                </AppText>
+                <AppText variant="caption" color={colors.primary[100]}>
+                  {activeTrip?.title} • {isPt ? "100% Offline" : "100% Offline"}
+                </AppText>
+              </View>
+              <TouchableOpacity
+                onPress={() => setReportModalVisible(false)}
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 16,
+                  backgroundColor: colors.grayscale[600],
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <X size={18} color={colors.grayscale[200]} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Conteúdo do Relatório */}
+            <ScrollView
+              contentContainerStyle={{ padding: 20, gap: 14 }}
+              showsVerticalScrollIndicator={false}
+            >
+              <View
+                style={{
+                  backgroundColor: "rgba(10, 13, 20, 0.95)",
+                  borderRadius: radii.md,
+                  padding: 14,
+                  borderWidth: 1,
+                  borderColor: colors.grayscale[600],
+                }}
+              >
+                <AppText
+                  variant="footnote"
+                  color={colors.grayscale[200]}
+                  style={{
+                    fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
+                    lineHeight: 20,
+                  }}
+                >
+                  {reportContent}
+                </AppText>
+              </View>
+
+              {/* Botões de Ação do Relatório */}
+              <View style={{ gap: 10 }}>
+                <Button
+                  title={isPt ? "Compartilhar Arquivo (.md)" : "Share File (.md)"}
+                  variant="primary"
+                  size="md"
+                  onPress={handleShareReportFile}
+                  icon={<Share2 size={16} color={colors.grayscale[100]} />}
+                />
+                <Button
+                  title={isPt ? "Copiar Texto / Compartilhar" : "Copy / Share Text"}
+                  variant="secondary"
+                  size="md"
+                  onPress={handleShareReportText}
+                  icon={<Copy size={16} color={colors.grayscale[100]} />}
+                />
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
 
       {/* Preview Interativo da Splash Art */}
       {showSplashPreview && (

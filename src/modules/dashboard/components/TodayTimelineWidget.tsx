@@ -43,7 +43,16 @@ export const TodayTimelineWidget: React.FC<{
           justifyContent: "space-between",
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            flex: 1,
+            minWidth: 0,
+            marginRight: 8,
+          }}
+        >
           <View
             style={{
               width: 32,
@@ -54,15 +63,26 @@ export const TodayTimelineWidget: React.FC<{
               borderColor: "rgba(56, 189, 248, 0.3)",
               alignItems: "center",
               justifyContent: "center",
+              flexShrink: 0,
             }}
           >
             <Clock size={16} color={colors.adventure.sky} />
           </View>
-          <View>
-            <AppText variant="headline" style={{ fontWeight: "700" }}>
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <AppText
+              variant="headline"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{ fontWeight: "700" }}
+            >
               {t.dashboard.todaySchedule}
             </AppText>
-            <AppText variant="caption" color={colors.grayscale[300]}>
+            <AppText
+              variant="caption"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              color={colors.grayscale[300]}
+            >
               {t.dashboard.stopsAndTrails}
             </AppText>
           </View>
@@ -71,9 +91,24 @@ export const TodayTimelineWidget: React.FC<{
         <TouchableOpacity
           onPress={onViewItineraryPress}
           activeOpacity={0.7}
-          style={{ flexDirection: "row", alignItems: "center", gap: 3 }}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 4,
+            paddingVertical: 5,
+            paddingHorizontal: 8,
+            borderRadius: radii.pill,
+            backgroundColor: "rgba(255, 104, 56, 0.1)",
+            borderWidth: 1,
+            borderColor: "rgba(255, 104, 56, 0.25)",
+            flexShrink: 0,
+          }}
         >
-          <AppText variant="caption" color={colors.primary[100]}>
+          <AppText
+            variant="caption"
+            color={colors.primary[100]}
+            style={{ fontWeight: "600" }}
+          >
             {t.dashboard.fullItinerary}
           </AppText>
           <ArrowRight size={12} color={colors.primary[100]} />

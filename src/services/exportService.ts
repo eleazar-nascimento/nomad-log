@@ -1,4 +1,6 @@
-import { Platform } from "react-native";
+import { Platform, Share } from "react-native";
+import * as FileSystem from "expo-file-system/legacy";
+import * as Sharing from "expo-sharing";
 import { Expense, JournalEntry, PackingItem, Trip, Waypoint } from "@/store/types";
 import { formatMoney } from "@/store/currencies";
 
@@ -71,7 +73,7 @@ export function generateTripJSON(
 }
 
 /**
- * Gera um relatório formatado em Markdown para colar em blogs, Notion ou WhatsApp
+ * Gera um relatório formatado em Markdown para ler, salvar ou colar em notas/WhatsApp
  */
 export function generateTripMarkdownReport(
   trip: Trip,
@@ -110,26 +112,33 @@ export function generateTripMarkdownReport(
 - **${isPt ? "Saldo Restante" : "Remaining Balance"}:** ${formatMoney(remaining, trip.baseCurrency)}
 - **${isPt ? "Quantidade de Lançamentos" : "Number of Expenses"}:** ${expenses.length}
 
-#### ${isPt ? "Últimos Gastos Registrados" : "Recent Expenses"}:
-${expenses
-  .slice(0, 10)
-  .map(
-    (e) =>
-      `- [${e.date}] **${e.description}**: ${formatMoney(e.amount, e.currency)} (≈ ${formatMoney(e.convertedAmountBase, trip.baseCurrency)}) • *${e.locationName}*`
-  )
-  .join("\n")}
+#### ${isPt ? "Lançamentos de Despesas" : "Expense Records"}:
+${
+  expenses.length === 0
+    ? `*${isPt ? "Nenhum gasto registrado ainda." : "No expenses recorded yet."}*`
+    : expenses
+        .map(
+          (e) =>
+            `- [${e.date} ${e.time}] **${e.description}**: ${formatMoney(e.amount, e.currency)} (≈ ${formatMoney(e.convertedAmountBase, trip.baseCurrency)}) • *${e.locationName}* [${e.category}]`
+        )
+        .join("\n")
+}
 
 ---
 
 ### 🗺️ ${isPt ? "Itinerário & Paradas Concluídas" : "Itinerary & Completed Stops"} (${waypoints.length} ${isPt ? "paradas" : "stops"})
-${waypoints
-  .map(
-    (w) =>
-      `- **[Dia ${w.dayIndex} - ${w.time}]** ${w.title} (${w.locationName}) ${
-        w.elevationMeters ? `• 🏔️ ${w.elevationMeters}m alt.` : ""
-      } [${w.status.toUpperCase()}]`
-  )
-  .join("\n")}
+${
+  waypoints.length === 0
+    ? `*${isPt ? "Nenhuma parada adicionada ainda." : "No waypoints added yet."}*`
+    : waypoints
+        .map(
+          (w) =>
+            `- **[Dia ${w.dayIndex} - ${w.time}]** ${w.title} (${w.locationName}) ${
+              w.elevationMeters ? `• 🏔️ ${w.elevationMeters}m alt.` : ""
+            } [${w.status.toUpperCase()}]`
+        )
+        .join("\n")
+}
 
 ---
 
@@ -141,14 +150,18 @@ ${waypoints
 ---
 
 ### 📖 ${isPt ? "Memórias do Diário de Bordo" : "Journal Highlights"} (${journal.length} ${isPt ? "relatos" : "entries"})
-${journal
-  .map(
-    (j) => `#### ✍️ ${j.title} (${j.date})
+${
+  journal.length === 0
+    ? `*${isPt ? "Nenhuma memória de bordo gravada ainda." : "No journal entries recorded yet."}*`
+    : journal
+        .map(
+          (j) => `#### ✍️ ${j.title} (${j.date})
 *${j.location} • Humor: ${j.mood}*
 > "${j.content}"
 `
-  )
-  .join("\n\n")}
+        )
+        .join("\n\n")
+}
 
 ---
 *NomadLog • Offline-First Travel Logbook & Multi-Currency Tracker*
@@ -156,13 +169,52 @@ ${journal
 }
 
 /**
- * Faz download do arquivo na Web ou copia para a área de transferência
+ * Exporta arquivo nativo no Android/iOS via expo-file-system e expo-sharing,
+ * ou faz download automático no navegador Web.
  */
 export async function triggerFileExport(
   content: string,
   filename: string,
   mimeType: string
 ): Promise<boolean> {
+  // 1. Android & iOS Nativos
+  if (Platform.OS !== "web") {
+    try {
+      const fileUri = `${FileSystem.cacheDirectory}${filename}`;
+      await FileSystem.writeAsStringAsync(fileUri, content, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (isAvailable) {
+        await Sharing.shareAsync(fileUri, {
+          mimeType,
+          dialogTitle: `NomadLog - ${filename}`,
+        });
+        return true;
+      } else {
+        await Share.share({
+          message: content,
+          title: filename,
+        });
+        return true;
+      }
+    } catch (e) {
+      console.warn("[ExportService] Erro ao exportar nativo:", e);
+      try {
+        await Share.share({
+          message: content,
+          title: filename,
+        });
+        return true;
+      } catch (fallbackErr) {
+        console.warn("[ExportService] Fallback de compartilhamento falhou:", fallbackErr);
+        return false;
+      }
+    }
+  }
+
+  // 2. Ambiente Web
   if (Platform.OS === "web" && typeof document !== "undefined") {
     try {
       const blob = new Blob([content], { type: mimeType });
@@ -176,20 +228,19 @@ export async function triggerFileExport(
       URL.revokeObjectURL(url);
       return true;
     } catch (e) {
-      console.warn("[Export] Falha ao fazer download na Web:", e);
+      console.warn("[ExportService] Falha ao fazer download na Web:", e);
     }
   }
 
-  // Fallback: Tenta copiar para área de transferência se estiver disponível
+  // 3. Fallback Clipboard na Web
   if (typeof navigator !== "undefined" && navigator.clipboard) {
     try {
       await navigator.clipboard.writeText(content);
       return true;
     } catch (err) {
-      console.warn("[Export] Falha ao copiar para clipboard:", err);
+      console.warn("[ExportService] Falha ao copiar para clipboard:", err);
     }
   }
 
   return false;
 }
-

@@ -6,16 +6,22 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Image,
+  Alert,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import {
   X,
   Check,
   Camera,
+  Image as ImageIcon,
   Sun,
   CloudRain,
   CloudFog,
   Snowflake,
   Zap,
+  Trash2,
+  Sparkles,
 } from "lucide-react-native";
 import { colors, radii } from "@/theme";
 import { AppText, Button, Input } from "@/components/ui";
@@ -57,9 +63,56 @@ export const NewJournalModal: React.FC<{
   const [mood, setMood] = useState<JournalMood>("adventurous");
   const [weather, setWeather] = useState<WeatherTag>("sunny");
   const [tagsStr, setTagsStr] = useState("#mochilao, #trilha");
-  const [selectedPhoto, setSelectedPhoto] = useState<string>(
-    SAMPLE_PHOTO_PRESETS[0]
-  );
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+
+  const handlePickFromGallery = async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permissão Necessária",
+          "Precisamos de permissão para acessar suas fotos e anexá-las à sua memória offline."
+        );
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: true,
+        quality: 0.85,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setSelectedPhoto(result.assets[0].uri);
+      }
+    } catch (e) {
+      console.warn("[ImagePicker] Erro ao selecionar foto:", e);
+    }
+  };
+
+  const handleTakePhoto = async () => {
+    try {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permissão de Câmera",
+          "Permita o acesso à câmera para registrar momentos diretamente no app."
+        );
+        return;
+      }
+
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        quality: 0.85,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setSelectedPhoto(result.assets[0].uri);
+      }
+    } catch (e) {
+      console.warn("[ImagePicker] Erro ao tirar foto:", e);
+    }
+  };
 
   const handleSave = () => {
     if (!title.trim() || !content.trim()) return;
@@ -85,6 +138,7 @@ export const NewJournalModal: React.FC<{
     setContent("");
     setLocation("");
     setAltitudeMeters("");
+    setSelectedPhoto(null);
     onClose();
   };
 
@@ -127,7 +181,7 @@ export const NewJournalModal: React.FC<{
               borderColor: colors.grayscale[600],
             }}
           >
-            <View>
+            <View style={{ flex: 1, minWidth: 0, marginRight: 10 }}>
               <AppText variant="headline" style={{ fontWeight: "700" }}>
                 Nova Memória de Bordo
               </AppText>
@@ -144,6 +198,7 @@ export const NewJournalModal: React.FC<{
                 backgroundColor: colors.grayscale[600],
                 alignItems: "center",
                 justifyContent: "center",
+                flexShrink: 0,
               }}
             >
               <X size={18} color={colors.grayscale[200]} />
@@ -282,79 +337,174 @@ export const NewJournalModal: React.FC<{
               </View>
             </View>
 
-            {/* Narrativa */}
+            {/* Narrativa / Relato da Experiência */}
             <View style={{ gap: 6 }}>
-              <AppText variant="caption" color={colors.grayscale[300]}>
-                Relato da Experiência
-              </AppText>
               <Input
+                label="Relato da Experiência"
                 placeholder="Escreva tudo o que viveu, sentiu e descobriu hoje..."
                 multiline
                 numberOfLines={4}
                 value={content}
                 onChangeText={setContent}
                 style={{
-                  height: 100,
-                  textAlignVertical: "top",
-                  paddingTop: 10,
+                  minHeight: 90,
                 }}
               />
             </View>
 
-            {/* Foto Preset Local */}
-            <View style={{ gap: 8 }}>
+            {/* Foto da Memória (Upload Real do Aparelho ou Câmera) */}
+            <View style={{ gap: 10 }}>
               <AppText variant="caption" color={colors.grayscale[300]}>
-                Foto da Memória (Armazenada Offline)
+                Foto da Memória (Anexe do seu Aparelho)
               </AppText>
-              <View style={{ flexDirection: "row", gap: 8 }}>
-                {SAMPLE_PHOTO_PRESETS.map((photoUri, idx) => {
-                  const isSelected = selectedPhoto === photoUri;
-                  return (
-                    <TouchableOpacity
-                      key={idx}
-                      onPress={() => setSelectedPhoto(photoUri)}
-                      style={{
-                        flex: 1,
-                        height: 54,
-                        borderRadius: radii.sm,
-                        overflow: "hidden",
-                        borderWidth: 2,
-                        borderColor: isSelected
-                          ? colors.primary[100]
-                          : "transparent",
-                      }}
-                    >
-                      <View
+
+              {selectedPhoto ? (
+                /* Preview da Foto Selecionada */
+                <View
+                  style={{
+                    borderRadius: radii.md,
+                    overflow: "hidden",
+                    borderWidth: 1,
+                    borderColor: colors.grayscale[500],
+                    backgroundColor: colors.grayscale[600],
+                  }}
+                >
+                  <Image
+                    source={{ uri: selectedPhoto }}
+                    style={{ width: "100%", height: 180 }}
+                    resizeMode="cover"
+                  />
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: 10,
+                      backgroundColor: colors.grayscale[700],
+                    }}
+                  >
+                    <AppText variant="caption" color={colors.adventure.emerald}>
+                      ✓ Foto pronta para salvar offline
+                    </AppText>
+                    <View style={{ flexDirection: "row", gap: 8 }}>
+                      <TouchableOpacity
+                        onPress={handlePickFromGallery}
                         style={{
-                          flex: 1,
-                          backgroundColor: colors.grayscale[500],
-                          alignItems: "center",
-                          justifyContent: "center",
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
+                          borderRadius: radii.sm,
+                          backgroundColor: colors.grayscale[600],
                         }}
                       >
-                        <Camera
-                          size={18}
-                          color={
-                            isSelected
-                              ? colors.primary[100]
-                              : colors.grayscale[300]
-                          }
-                        />
-                        <AppText
-                          variant="caption"
-                          color={
-                            isSelected
-                              ? colors.primary[100]
-                              : colors.grayscale[300]
-                          }
-                        >
-                          Foto {idx + 1}
+                        <AppText variant="caption" color={colors.primary[100]}>
+                          Trocar
                         </AppText>
-                      </View>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => setSelectedPhoto(null)}
+                        style={{
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
+                          borderRadius: radii.sm,
+                          backgroundColor: "rgba(239, 68, 68, 0.2)",
+                        }}
+                      >
+                        <Trash2 size={14} color={colors.message.red} />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              ) : (
+                /* Botões de Ação para Anexar Foto Real */
+                <View style={{ gap: 10 }}>
+                  <View style={{ flexDirection: "row", gap: 10 }}>
+                    <TouchableOpacity
+                      onPress={handlePickFromGallery}
+                      activeOpacity={0.8}
+                      style={{
+                        flex: 1,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 8,
+                        backgroundColor: colors.grayscale[600],
+                        borderWidth: 1,
+                        borderColor: colors.grayscale[500],
+                        paddingVertical: 12,
+                        borderRadius: radii.md,
+                      }}
+                    >
+                      <ImageIcon size={18} color={colors.primary[100]} />
+                      <AppText
+                        variant="caption"
+                        color={colors.grayscale[100]}
+                        style={{ fontWeight: "600" }}
+                      >
+                        Galeria de Fotos
+                      </AppText>
                     </TouchableOpacity>
-                  );
-                })}
-              </View>
+
+                    <TouchableOpacity
+                      onPress={handleTakePhoto}
+                      activeOpacity={0.8}
+                      style={{
+                        flex: 1,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 8,
+                        backgroundColor: colors.grayscale[600],
+                        borderWidth: 1,
+                        borderColor: colors.grayscale[500],
+                        paddingVertical: 12,
+                        borderRadius: radii.md,
+                      }}
+                    >
+                      <Camera size={18} color={colors.adventure.amber} />
+                      <AppText
+                        variant="caption"
+                        color={colors.grayscale[100]}
+                        style={{ fontWeight: "600" }}
+                      >
+                        Tirar Foto Agora
+                      </AppText>
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* Sugestões rápidas de fotos da trilha */}
+                  <View style={{ gap: 6 }}>
+                    <AppText variant="footnote" color={colors.grayscale[400]}>
+                      Ou escolha um modelo rápido:
+                    </AppText>
+                    <ScrollView
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      contentContainerStyle={{ gap: 8 }}
+                    >
+                      {SAMPLE_PHOTO_PRESETS.map((photoUri, idx) => (
+                        <TouchableOpacity
+                          key={idx}
+                          onPress={() => setSelectedPhoto(photoUri)}
+                          style={{
+                            width: 64,
+                            height: 48,
+                            borderRadius: radii.sm,
+                            overflow: "hidden",
+                            borderWidth: 1,
+                            borderColor: colors.grayscale[500],
+                          }}
+                        >
+                          <Image
+                            source={{ uri: photoUri }}
+                            style={{ width: "100%", height: "100%" }}
+                            resizeMode="cover"
+                          />
+                        </TouchableOpacity>
+                      ))}
+                    </ScrollView>
+                  </View>
+                </View>
+              )}
             </View>
 
             <Input
@@ -378,4 +528,3 @@ export const NewJournalModal: React.FC<{
     </Modal>
   );
 };
-

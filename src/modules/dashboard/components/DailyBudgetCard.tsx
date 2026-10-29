@@ -43,7 +43,16 @@ export const DailyBudgetCard: React.FC<{
           justifyContent: "space-between",
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            flex: 1,
+            minWidth: 0,
+            marginRight: 8,
+          }}
+        >
           <View
             style={{
               width: 32,
@@ -54,15 +63,26 @@ export const DailyBudgetCard: React.FC<{
               borderColor: "rgba(245, 158, 11, 0.3)",
               alignItems: "center",
               justifyContent: "center",
+              flexShrink: 0,
             }}
           >
             <Wallet size={16} color={colors.adventure.amber} />
           </View>
-          <View>
-            <AppText variant="headline" style={{ fontWeight: "700" }}>
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <AppText
+              variant="headline"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{ fontWeight: "700" }}
+            >
               {t.dashboard.tripBudget}
             </AppText>
-            <AppText variant="caption" color={colors.grayscale[300]}>
+            <AppText
+              variant="caption"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              color={colors.grayscale[300]}
+            >
               {t.dashboard.dailyTarget}: {formatMoney(activeTrip.dailyBudgetBase, activeTrip.baseCurrency)} {isPt ? "/ dia" : "/ day"}
             </AppText>
           </View>
@@ -79,6 +99,7 @@ export const DailyBudgetCard: React.FC<{
             paddingHorizontal: 10,
             paddingVertical: 6,
             borderRadius: radii.pill,
+            flexShrink: 0,
           }}
         >
           <Plus size={14} color={colors.grayscale[100]} />
@@ -87,7 +108,7 @@ export const DailyBudgetCard: React.FC<{
             color={colors.grayscale[100]}
             style={{ fontWeight: "700" }}
           >
-            {t.dashboard.logExpense}
+            {isPt ? "+ Novo Gasto" : "+ Expense"}
           </AppText>
         </TouchableOpacity>
       </View>

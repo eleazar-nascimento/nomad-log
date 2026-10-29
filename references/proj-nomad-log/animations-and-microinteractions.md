@@ -37,6 +37,15 @@ Localizado em [`src/components/ui/CircularProgress.tsx`](file:///Volumes/crucial
 ### 4. Transições de Status Táteis
 - Nos botões de status do roteiro (*Pendente* ➡️ *Em Trânsito* ➡️ *Feito*) e nos checkboxes da bagagem, as mudanças visuais contam com feedback visual claro e suave.
 
+### 5. Splash Art Animada de Inicialização (`AnimatedSplashScreen`)
+Localizado em [`src/components/splash/AnimatedSplashScreen.tsx`](file:///Volumes/crucial-x9/ideias/nomad-log/src/components/splash/AnimatedSplashScreen.tsx):
+- **Entrada Spring com Agulha Magnética:** O ícone 3D do app surge com `withSpring` enquanto a agulha da bússola oscila (`-14°` ➡️ `+10°` ➡️ `-6°` ➡️ `0°`) simulando o alinhamento ao Norte magnético da Terra.
+- **Aura Radial Pulsante:** Efeito de respiração contínua em gradiente `Sunset Orange` (`#FF6838`) e `Explorer Gold` (`#F59E0B`) com `withRepeat`.
+- **Tipografia Escalonada:** Entrada do logotipo `NomadLog` e tagline via `withDelay` e `FadeIn`.
+- **Barra de Progresso do Motor Offline:** Preenchimento fluido de 0% a 100% enquanto transiciona pelas etapas de verificação local (*Inicializando motor offline...*, *Restaurando taxas de câmbio...*, *100% pronto!*).
+- **Transição de Saída Sem Fissuras:** Ao concluir (~2.2s), o container realiza um suave zoom-out (`scale: 1.05`) com fade out (`opacity: 0`), revelando as telas do app sem qualquer salto visual ou piscar de tela.
+- **Preview Interativo:** Disponível para re-execução a qualquer momento através do botão na tela de Configurações.
+
 ---
 
 ## 💻 Exemplo de Código do `AnimatedContainer`

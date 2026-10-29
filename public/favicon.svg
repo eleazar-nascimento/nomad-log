@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0E131F"/>
+      <stop offset="100%" stop-color="#080B12"/>
+    </linearGradient>
+    <linearGradient id="north" x1="0%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#FF6838"/>
+      <stop offset="100%" stop-color="#FFA07A"/>
+    </linearGradient>
+    <linearGradient id="south" x1="50%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#FDE68A"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="rgba(255, 255, 255, 0.15)" stroke-width="2"/>
+
+  <!-- Dial Ring -->
+  <circle cx="64" cy="64" r="44" fill="none" stroke="#FF6838" stroke-width="3" opacity="0.6"/>
+
+  <!-- Mountain Peak silhouette -->
+  <polygon points="64,36 94,82 34,82" fill="#1E293B" opacity="0.9"/>
+  <path d="M64 36 L64 82" stroke="#38BDF8" stroke-width="2" opacity="0.6"/>
+
+  <!-- Compass Needle -->
+  <polygon points="64,18 64,64 52,64" fill="url(#north)"/>
+  <polygon points="64,18 64,64 76,64" fill="#E54B1F"/>
+  <polygon points="64,110 64,64 52,64" fill="url(#south)"/>
+  <polygon points="64,110 64,64 76,64" fill="#D97706"/>
+
+  <polygon points="110,64 64,64 64,58" fill="#F8FAFC"/>
+  <polygon points="110,64 64,64 64,70" fill="#94A3B8"/>
+  <polygon points="18,64 64,64 64,58" fill="#CBD5E1"/>
+  <polygon points="18,64 64,64 64,70" fill="#64748B"/>
+
+  <!-- Center Pivot -->
+  <circle cx="64" cy="64" r="7" fill="#0E131F" stroke="#F59E0B" stroke-width="2"/>
+  <circle cx="64" cy="64" r="3" fill="#FFFFFF"/>
+</svg>
+

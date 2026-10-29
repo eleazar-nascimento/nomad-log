@@ -51,6 +51,18 @@ last_updated: "2026-10-29T04:25:00Z"
   - Exportação de Relatório Narrativo em Markdown com métricas financeiras
   - Download nativo na web via Blob e fallback automático para área de transferência
   - Status e gatilhos de sincronização da fila de mutações criptografada (AES-256)
+- [x] **Splash Art Animada de Inicialização**:
+  - Tela de splash completa e dinâmica ([`AnimatedSplashScreen.tsx`](file:///Volumes/crucial-x9/ideias/nomad-log/src/components/splash/AnimatedSplashScreen.tsx))
+  - Ícone 3D em spring com agulha de bússola oscilando para o Norte magnético
+  - Aura de respiração radial brilhante em gradiente sunset/amber
+  - Linha de progresso e transição de etapas do motor offline
+  - Saída fluida com fade out e leve escala sem saltos visuais
+  - Botão interativo para replay na tela de Configurações
+- [x] **Identidade Visual & Ícones Oficiais (Pasta `public/`)**:
+  - Ícone Master Vetorial SVG escalável (`public/icon.svg`)
+  - Render 3D Glassmorphic de alta resolução (`public/app-icon.png` e `public/icon.png`)
+  - Favicon para navegadores web (`public/favicon.svg`)
+  - Showcase interativo em HTML (`public/preview.html`) com exportador em tempo real
 - [x] **Ajuste para Dynamic Island & Safe Area**:
   - Margem superior dinâmica com `useSafeAreaInsets()` no `TopHeader`
   - Moldura de iPhone 16 Pro com ilha dinâmica integrada no preview web

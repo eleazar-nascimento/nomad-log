@@ -7,17 +7,20 @@
     "scheme": "nomadlog",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
+    "icon": "./public/icon.png",
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#0F1115"
+        "backgroundColor": "#0F1115",
+        "foregroundImage": "./public/icon.png"
       }
     },
     "web": {
       "bundler": "metro",
-      "output": "single"
+      "output": "single",
+      "favicon": "./public/icon.png"
     },
     "plugins": [
       "expo-router",

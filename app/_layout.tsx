@@ -18,6 +18,7 @@ import { DeviceFrame } from "@/components/ui";
 import { SideControlPanel, ModalProvider, useModals } from "@/components/layout";
 import { TripManagerModal } from "@/modules/pro/screens/TripManagerModal";
 import { ProUpgradeModal } from "@/modules/pro/screens/ProUpgradeModal";
+import { AnimatedSplashScreen } from "@/components/splash";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -31,6 +32,8 @@ function InnerFrame() {
     closeProModal,
   } = useModals();
 
+  const [splashFinished, setSplashFinished] = React.useState(false);
+
   return (
     <DeviceFrame
       sidePanel={
@@ -40,21 +43,30 @@ function InnerFrame() {
         />
       }
     >
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: colors.grayscale[700] },
-        }}
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="settings"
-          options={{
+      <View style={{ flex: 1, position: "relative" }}>
+        <Stack
+          screenOptions={{
             headerShown: false,
-            animation: "slide_from_right",
+            contentStyle: { backgroundColor: colors.grayscale[700] },
           }}
-        />
-      </Stack>
+        >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="settings"
+            options={{
+              headerShown: false,
+              animation: "slide_from_right",
+            }}
+          />
+        </Stack>
+
+        {!splashFinished && (
+          <AnimatedSplashScreen
+            onFinish={() => setSplashFinished(true)}
+            minDuration={2200}
+          />
+        )}
+      </View>
 
       <TripManagerModal
         visible={tripModalOpen}

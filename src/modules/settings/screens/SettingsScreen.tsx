@@ -22,6 +22,7 @@ import {
 import { colors, radii } from "@/theme";
 import { AppText, Card, Badge, Button, AnimatedContainer } from "@/components/ui";
 import { useDeviceChrome } from "@/components/ui/DeviceChrome";
+import { AnimatedSplashScreen } from "@/components/splash";
 import { useTranslation } from "@/i18n";
 import { useAppStore } from "@/store";
 import {
@@ -71,6 +72,7 @@ export const SettingsScreen: React.FC<{
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [refreshingFx, setRefreshingFx] = useState(false);
+  const [showSplashPreview, setShowSplashPreview] = useState(false);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -358,14 +360,16 @@ export const SettingsScreen: React.FC<{
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "space-between",
+                gap: 10,
               }}
             >
-              <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 8, flex: 1, minWidth: 0 }}>
                 <Crown
                   size={18}
                   color={isPro ? colors.adventure.amber : colors.primary[100]}
+                  style={{ flexShrink: 0 }}
                 />
-                <AppText variant="headline" style={{ fontWeight: "700" }}>
+                <AppText variant="headline" style={{ fontWeight: "700", flex: 1, minWidth: 0 }} numberOfLines={1}>
                   {t.settings.proStatusSection}
                 </AppText>
               </View>
@@ -395,31 +399,73 @@ export const SettingsScreen: React.FC<{
           </Card>
         </AnimatedContainer>
 
-        {/* 3. CENTRAL DE EXPORTAÇÃO DE DADOS (Recurso Pro Exibido) */}
+        {/* 3. CENTRAL DE EXPORTAÇÃO DE DADOS (Recurso Pro Exibido - 100% Responsivo) */}
         <AnimatedContainer delay={140}>
           <Card variant="surface" style={{ gap: 14, padding: 16 }}>
             <View
               style={{
                 flexDirection: "row",
-                alignItems: "center",
+                alignItems: "flex-start",
                 justifyContent: "space-between",
+                gap: 10,
               }}
             >
-              <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                <FileSpreadsheet size={18} color={colors.primary[100]} />
-                <View>
+              <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 10, flex: 1, minWidth: 0 }}>
+                <View
+                  style={{
+                    width: 34,
+                    height: 34,
+                    borderRadius: radii.md,
+                    backgroundColor: "rgba(255, 104, 56, 0.15)",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                    marginTop: 2,
+                  }}
+                >
+                  <FileSpreadsheet size={18} color={colors.primary[100]} />
+                </View>
+                <View style={{ flex: 1, minWidth: 0 }}>
                   <AppText variant="headline" style={{ fontWeight: "700" }}>
                     {t.settings.dataExportSection}
                   </AppText>
-                  <AppText variant="caption" color={colors.grayscale[300]}>
+                  <AppText variant="caption" color={colors.grayscale[300]} style={{ marginTop: 2 }}>
                     {t.settings.dataExportDesc}
                   </AppText>
                 </View>
               </View>
-              {!isPro && <Lock size={15} color={colors.adventure.amber} />}
+
+              <View style={{ flexShrink: 0, marginTop: 2 }}>
+                {!isPro ? (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 4,
+                      backgroundColor: "rgba(245, 158, 11, 0.15)",
+                      paddingHorizontal: 8,
+                      paddingVertical: 3,
+                      borderRadius: radii.pill,
+                      borderWidth: 1,
+                      borderColor: "rgba(245, 158, 11, 0.3)",
+                    }}
+                  >
+                    <Lock size={11} color={colors.adventure.amber} />
+                    <AppText
+                      variant="caption"
+                      color={colors.adventure.amber}
+                      style={{ fontWeight: "700" }}
+                    >
+                      PRO
+                    </AppText>
+                  </View>
+                ) : (
+                  <Badge label="DESBLOQUEADO" variant="emerald" size="sm" />
+                )}
+              </View>
             </View>
 
-            {/* Opções de Exportação */}
+            {/* Opções de Exportação em Cards Ajustáveis */}
             <View style={{ gap: 10 }}>
               {/* Exportar CSV */}
               <TouchableOpacity
@@ -434,25 +480,51 @@ export const SettingsScreen: React.FC<{
                   padding: 12,
                   borderWidth: 1,
                   borderColor: colors.grayscale[500],
+                  gap: 12,
                 }}
               >
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1 }}>
-                  <FileSpreadsheet size={20} color={colors.adventure.emerald} />
-                  <View style={{ flex: 1 }}>
-                    <AppText variant="subheadline" style={{ fontWeight: "700" }}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1, minWidth: 0 }}>
+                  <View
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: radii.md,
+                      backgroundColor: "rgba(16, 185, 129, 0.15)",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <FileSpreadsheet size={18} color={colors.adventure.emerald} />
+                  </View>
+                  <View style={{ flex: 1, minWidth: 0 }}>
+                    <AppText variant="subheadline" style={{ fontWeight: "700" }} numberOfLines={1}>
                       {t.settings.exportCsv}
                     </AppText>
-                    <AppText variant="caption" color={colors.grayscale[300]}>
+                    <AppText variant="caption" color={colors.grayscale[300]} numberOfLines={2}>
                       {t.settings.exportCsvSub}
                     </AppText>
                   </View>
                 </View>
 
-                {isPro ? (
-                  <Copy size={16} color={colors.grayscale[300]} />
-                ) : (
-                  <Badge label="PRO" variant="amber" size="sm" />
-                )}
+                <View style={{ flexShrink: 0, paddingLeft: 4 }}>
+                  {isPro ? (
+                    <View
+                      style={{
+                        width: 30,
+                        height: 30,
+                        borderRadius: 15,
+                        backgroundColor: colors.grayscale[600],
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Copy size={14} color={colors.grayscale[200]} />
+                    </View>
+                  ) : (
+                    <Badge label="PRO" variant="amber" size="sm" />
+                  )}
+                </View>
               </TouchableOpacity>
 
               {/* Exportar JSON */}
@@ -468,25 +540,51 @@ export const SettingsScreen: React.FC<{
                   padding: 12,
                   borderWidth: 1,
                   borderColor: colors.grayscale[500],
+                  gap: 12,
                 }}
               >
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1 }}>
-                  <FileCode size={20} color={colors.adventure.sky} />
-                  <View style={{ flex: 1 }}>
-                    <AppText variant="subheadline" style={{ fontWeight: "700" }}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1, minWidth: 0 }}>
+                  <View
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: radii.md,
+                      backgroundColor: "rgba(56, 189, 248, 0.15)",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <FileCode size={18} color={colors.adventure.sky} />
+                  </View>
+                  <View style={{ flex: 1, minWidth: 0 }}>
+                    <AppText variant="subheadline" style={{ fontWeight: "700" }} numberOfLines={1}>
                       {t.settings.exportJson}
                     </AppText>
-                    <AppText variant="caption" color={colors.grayscale[300]}>
+                    <AppText variant="caption" color={colors.grayscale[300]} numberOfLines={2}>
                       {t.settings.exportJsonSub}
                     </AppText>
                   </View>
                 </View>
 
-                {isPro ? (
-                  <Copy size={16} color={colors.grayscale[300]} />
-                ) : (
-                  <Badge label="PRO" variant="amber" size="sm" />
-                )}
+                <View style={{ flexShrink: 0, paddingLeft: 4 }}>
+                  {isPro ? (
+                    <View
+                      style={{
+                        width: 30,
+                        height: 30,
+                        borderRadius: 15,
+                        backgroundColor: colors.grayscale[600],
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Copy size={14} color={colors.grayscale[200]} />
+                    </View>
+                  ) : (
+                    <Badge label="PRO" variant="amber" size="sm" />
+                  )}
+                </View>
               </TouchableOpacity>
 
               {/* Exportar Relatório Formatado */}
@@ -502,75 +600,128 @@ export const SettingsScreen: React.FC<{
                   padding: 12,
                   borderWidth: 1,
                   borderColor: colors.grayscale[500],
+                  gap: 12,
                 }}
               >
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1 }}>
-                  <FileText size={20} color={colors.adventure.purple} />
-                  <View style={{ flex: 1 }}>
-                    <AppText variant="subheadline" style={{ fontWeight: "700" }}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1, minWidth: 0 }}>
+                  <View
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: radii.md,
+                      backgroundColor: "rgba(168, 85, 247, 0.15)",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <FileText size={18} color={colors.adventure.purple} />
+                  </View>
+                  <View style={{ flex: 1, minWidth: 0 }}>
+                    <AppText variant="subheadline" style={{ fontWeight: "700" }} numberOfLines={1}>
                       {t.settings.exportReport}
                     </AppText>
-                    <AppText variant="caption" color={colors.grayscale[300]}>
+                    <AppText variant="caption" color={colors.grayscale[300]} numberOfLines={2}>
                       {t.settings.exportReportSub}
                     </AppText>
                   </View>
                 </View>
 
-                {isPro ? (
-                  <Copy size={16} color={colors.grayscale[300]} />
-                ) : (
-                  <Badge label="PRO" variant="amber" size="sm" />
-                )}
+                <View style={{ flexShrink: 0, paddingLeft: 4 }}>
+                  {isPro ? (
+                    <View
+                      style={{
+                        width: 30,
+                        height: 30,
+                        borderRadius: 15,
+                        backgroundColor: colors.grayscale[600],
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Copy size={14} color={colors.grayscale[200]} />
+                    </View>
+                  ) : (
+                    <Badge label="PRO" variant="amber" size="sm" />
+                  )}
+                </View>
               </TouchableOpacity>
             </View>
           </Card>
         </AnimatedContainer>
 
-        {/* 4. BACKUP NA NUVEM & FILA OFFLINE */}
+        {/* 4. BACKUP NA NUVEM & FILA OFFLINE (100% Responsivo) */}
         <AnimatedContainer delay={190}>
-          <Card variant="surface" style={{ gap: 12, padding: 16 }}>
+          <Card variant="surface" style={{ gap: 14, padding: 16 }}>
             <View
               style={{
                 flexDirection: "row",
-                alignItems: "center",
+                alignItems: "flex-start",
                 justifyContent: "space-between",
+                gap: 10,
               }}
             >
-              <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                <Cloud size={18} color={colors.adventure.sky} />
-                <View>
+              <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 10, flex: 1, minWidth: 0 }}>
+                <View
+                  style={{
+                    width: 34,
+                    height: 34,
+                    borderRadius: radii.md,
+                    backgroundColor: "rgba(56, 189, 248, 0.15)",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                    marginTop: 2,
+                  }}
+                >
+                  <Cloud size={18} color={colors.adventure.sky} />
+                </View>
+                <View style={{ flex: 1, minWidth: 0 }}>
                   <AppText variant="headline" style={{ fontWeight: "700" }}>
                     {t.settings.cloudSyncSection}
                   </AppText>
-                  <AppText variant="caption" color={colors.grayscale[300]}>
+                  <AppText variant="caption" color={colors.grayscale[300]} style={{ marginTop: 2 }}>
                     {t.settings.cloudSyncDesc}
                   </AppText>
                 </View>
               </View>
 
-              <Badge
-                label={
-                  state.mutationQueue.length > 0
-                    ? `${state.mutationQueue.length} ${t.header.queuePending}`
-                    : t.header.savedLocally
-                }
-                variant={state.mutationQueue.length > 0 ? "primary" : "emerald"}
-                size="sm"
-              />
+              <View style={{ flexShrink: 0, marginTop: 2 }}>
+                <Badge
+                  label={
+                    state.mutationQueue.length > 0
+                      ? `${state.mutationQueue.length} ${t.header.queuePending}`
+                      : t.header.savedLocally
+                  }
+                  variant={state.mutationQueue.length > 0 ? "primary" : "emerald"}
+                  size="sm"
+                />
+              </View>
             </View>
 
+            {/* Selo Criptografia AES-256 Responsivo */}
             <View
               style={{
                 flexDirection: "row",
-                alignItems: "center",
-                gap: 6,
+                alignItems: "flex-start",
+                gap: 8,
                 backgroundColor: colors.grayscale[700],
                 padding: 10,
                 borderRadius: radii.sm,
+                borderWidth: 1,
+                borderColor: colors.grayscale[600],
               }}
             >
-              <ShieldCheck size={14} color={colors.adventure.emerald} />
-              <AppText variant="footnote" color={colors.grayscale[200]}>
+              <ShieldCheck
+                size={15}
+                color={colors.adventure.emerald}
+                style={{ marginTop: 2, flexShrink: 0 }}
+              />
+              <AppText
+                variant="footnote"
+                color={colors.grayscale[200]}
+                style={{ flex: 1, minWidth: 0, lineHeight: 18 }}
+              >
                 {t.settings.encryptionBadge}
               </AppText>
             </View>
@@ -590,13 +741,26 @@ export const SettingsScreen: React.FC<{
         {/* 5. MOTOR DE CÂMBIO OFFLINE */}
         <AnimatedContainer delay={240}>
           <Card variant="surface" style={{ gap: 12, padding: 16 }}>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-              <Coins size={18} color={colors.adventure.amber} />
-              <View>
+            <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 10 }}>
+              <View
+                style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: radii.md,
+                  backgroundColor: "rgba(245, 158, 11, 0.15)",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                  marginTop: 2,
+                }}
+              >
+                <Coins size={18} color={colors.adventure.amber} />
+              </View>
+              <View style={{ flex: 1, minWidth: 0 }}>
                 <AppText variant="headline" style={{ fontWeight: "700" }}>
                   {t.settings.offlineEngineSection}
                 </AppText>
-                <AppText variant="caption" color={colors.grayscale[300]}>
+                <AppText variant="caption" color={colors.grayscale[300]} style={{ marginTop: 2 }}>
                   {t.settings.offlineEngineDesc}
                 </AppText>
               </View>
@@ -633,17 +797,46 @@ export const SettingsScreen: React.FC<{
 
         {/* 6. RESTAURAR DEMO & VERSÃO */}
         <AnimatedContainer delay={280}>
-          <Card variant="surface" style={{ gap: 12, padding: 16, alignItems: "center" }}>
-            <TouchableOpacity
-              onPress={handleResetData}
-              activeOpacity={0.7}
-              style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
-            >
-              <RotateCcw size={14} color={colors.grayscale[300]} />
-              <AppText variant="footnote" color={colors.grayscale[300]}>
-                {t.settings.resetDemoBtn}
-              </AppText>
-            </TouchableOpacity>
+          <Card variant="surface" style={{ gap: 14, padding: 16, alignItems: "center" }}>
+            <View style={{ flexDirection: "row", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>
+              <TouchableOpacity
+                onPress={() => setShowSplashPreview(true)}
+                activeOpacity={0.7}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 6,
+                  backgroundColor: "rgba(255, 104, 56, 0.12)",
+                  paddingHorizontal: 12,
+                  paddingVertical: 7,
+                  borderRadius: radii.pill,
+                  borderWidth: 1,
+                  borderColor: "rgba(255, 104, 56, 0.3)",
+                }}
+              >
+                <Sparkles size={13} color={colors.primary[100]} />
+                <AppText variant="footnote" color={colors.primary[100]} style={{ fontWeight: "700" }}>
+                  {isPt ? "Reproduzir Splash Art" : "Play Splash Art"}
+                </AppText>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={handleResetData}
+                activeOpacity={0.7}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 6,
+                  paddingHorizontal: 10,
+                  paddingVertical: 7,
+                }}
+              >
+                <RotateCcw size={14} color={colors.grayscale[300]} />
+                <AppText variant="footnote" color={colors.grayscale[300]}>
+                  {t.settings.resetDemoBtn}
+                </AppText>
+              </TouchableOpacity>
+            </View>
 
             <AppText variant="caption" color={colors.grayscale[400]}>
               NomadLog v1.0.0 • Mobile-First Offline Architecture
@@ -651,6 +844,14 @@ export const SettingsScreen: React.FC<{
           </Card>
         </AnimatedContainer>
       </ScrollView>
+
+      {/* Preview Interativo da Splash Art */}
+      {showSplashPreview && (
+        <AnimatedSplashScreen
+          onFinish={() => setShowSplashPreview(false)}
+          minDuration={2200}
+        />
+      )}
     </View>
   );
 };

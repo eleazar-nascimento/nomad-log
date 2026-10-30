@@ -68,6 +68,9 @@ export interface Waypoint {
   notes?: string;
   lat?: number;
   lng?: number;
+  estimatedCost?: number; // Custo previsto da atividade
+  estimatedCurrency?: CurrencyCode; // Moeda do custo previsto (ex: THB, USD, BRL)
+  linkedExpenseId?: string; // ID da despesa lançada a partir desta parada
 }
 
 export type JournalMood = "amazed" | "tired_happy" | "adventurous" | "peaceful" | "challenged";

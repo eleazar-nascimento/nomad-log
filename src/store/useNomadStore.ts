@@ -51,9 +51,16 @@ export interface NomadStoreState extends NomadPersistedState {
     distanceKm?: number;
     durationMinutes?: number;
     notes?: string;
+    estimatedCost?: number;
+    estimatedCurrency?: CurrencyCode;
+    lat?: number;
+    lng?: number;
   }) => void;
   toggleWaypointStatus: (id: string) => void;
   deleteWaypoint: (id: string) => void;
+  moveWaypointToDay: (id: string, newDayIndex: number) => void;
+  shiftWaypointTime: (id: string, deltaMinutes: number) => void;
+  linkExpenseToWaypoint: (waypointId: string, expenseId: string) => void;
 
   addJournalEntry: (data: {
     title: string;
@@ -226,6 +233,52 @@ export const useNomadStore = create<NomadStoreState>((set, get) => ({
     const s = get();
     const newQueue = createMutation("delete", "waypoint", { id }, s.mutationQueue);
     const updated = s.waypoints.filter((w) => w.id !== id);
+    set({ waypoints: updated, mutationQueue: newQueue });
+    saveToAsyncStorage({ ...get() });
+  },
+
+  moveWaypointToDay: (id, newDayIndex) => {
+    const s = get();
+    const updated = s.waypoints.map((wp) => {
+      if (wp.id === id) {
+        return { ...wp, dayIndex: newDayIndex, date: `Dia ${newDayIndex}` };
+      }
+      return wp;
+    });
+    const target = updated.find((w) => w.id === id);
+    const newQueue = createMutation("update", "waypoint", target, s.mutationQueue);
+    set({ waypoints: updated, mutationQueue: newQueue });
+    saveToAsyncStorage({ ...get() });
+  },
+
+  shiftWaypointTime: (id, deltaMinutes) => {
+    const s = get();
+    const updated = s.waypoints.map((wp) => {
+      if (wp.id === id) {
+        const [h, m] = wp.time.split(":").map(Number);
+        const totalMin = Math.max(0, Math.min(23 * 60 + 59, (h || 0) * 60 + (m || 0) + deltaMinutes));
+        const newH = String(Math.floor(totalMin / 60)).padStart(2, "0");
+        const newM = String(totalMin % 60).padStart(2, "0");
+        return { ...wp, time: `${newH}:${newM}` };
+      }
+      return wp;
+    });
+    const target = updated.find((w) => w.id === id);
+    const newQueue = createMutation("update", "waypoint", target, s.mutationQueue);
+    set({ waypoints: updated, mutationQueue: newQueue });
+    saveToAsyncStorage({ ...get() });
+  },
+
+  linkExpenseToWaypoint: (waypointId, expenseId) => {
+    const s = get();
+    const updated = s.waypoints.map((wp) => {
+      if (wp.id === waypointId) {
+        return { ...wp, linkedExpenseId: expenseId };
+      }
+      return wp;
+    });
+    const target = updated.find((w) => w.id === waypointId);
+    const newQueue = createMutation("update", "waypoint", target, s.mutationQueue);
     set({ waypoints: updated, mutationQueue: newQueue });
     saveToAsyncStorage({ ...get() });
   },

@@ -157,6 +157,8 @@ export const INITIAL_WAYPOINTS: Waypoint[] = [
     distanceKm: 0,
     durationMinutes: 45,
     status: "done",
+    estimatedCost: 650,
+    estimatedCurrency: "THB",
     notes: "Deixar mochilão pesado e colocar dinheiro em moeda local na doleira.",
   },
   {
@@ -172,6 +174,8 @@ export const INITIAL_WAYPOINTS: Waypoint[] = [
     distanceKm: 4.2,
     durationMinutes: 180,
     status: "done",
+    estimatedCost: 300,
+    estimatedCurrency: "THB",
     notes: "Roupas cobrindo ombros e joelhos. Pegar barco local público no rio Chao Phraya.",
   },
   {
@@ -187,6 +191,8 @@ export const INITIAL_WAYPOINTS: Waypoint[] = [
     distanceKm: 680,
     durationMinutes: 780,
     status: "done",
+    estimatedCost: 950,
+    estimatedCurrency: "THB",
     notes: "Trem com leito #24, levar casaco leve pois o ar-condicionado é forte.",
   },
   {
@@ -202,6 +208,8 @@ export const INITIAL_WAYPOINTS: Waypoint[] = [
     distanceKm: 12.5,
     durationMinutes: 120,
     status: "in_progress",
+    estimatedCost: 250,
+    estimatedCurrency: "THB",
     notes: "Verificar freios e capacete. Levar mapa offline salvo no app.",
   },
   {
@@ -217,6 +225,8 @@ export const INITIAL_WAYPOINTS: Waypoint[] = [
     distanceKm: 8.4,
     durationMinutes: 300,
     status: "pending",
+    estimatedCost: 1200,
+    estimatedCurrency: "THB",
     notes: "Sem sinal de celular por 6 horas. Ponto de encontro com o guia Karen às 07:30.",
   },
   {
@@ -232,6 +242,8 @@ export const INITIAL_WAYPOINTS: Waypoint[] = [
     distanceKm: 980,
     durationMinutes: 110,
     status: "pending",
+    estimatedCost: 2200,
+    estimatedCurrency: "THB",
     notes: "Visto eletrônico (eVisa) salvo em PDF na memória offline.",
   },
 ];

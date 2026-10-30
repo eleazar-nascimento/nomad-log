@@ -59,9 +59,16 @@ interface AppContextValue {
     distanceKm?: number;
     durationMinutes?: number;
     notes?: string;
+    estimatedCost?: number;
+    estimatedCurrency?: CurrencyCode;
+    lat?: number;
+    lng?: number;
   }) => void;
   toggleWaypointStatus: (id: string) => void;
   deleteWaypoint: (id: string) => void;
+  moveWaypointToDay: (id: string, newDayIndex: number) => void;
+  shiftWaypointTime: (id: string, deltaMinutes: number) => void;
+  linkExpenseToWaypoint: (waypointId: string, expenseId: string) => void;
 
   addJournalEntry: (entry: {
     title: string;
@@ -196,6 +203,9 @@ export function useAppStore(): AppContextValue {
     addWaypoint: store.addWaypoint,
     toggleWaypointStatus: store.toggleWaypointStatus,
     deleteWaypoint: store.deleteWaypoint,
+    moveWaypointToDay: store.moveWaypointToDay,
+    shiftWaypointTime: store.shiftWaypointTime,
+    linkExpenseToWaypoint: store.linkExpenseToWaypoint,
     addJournalEntry: store.addJournalEntry,
     deleteJournalEntry: store.deleteJournalEntry,
     togglePackingItem: store.togglePackingItem,

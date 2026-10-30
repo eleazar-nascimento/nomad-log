@@ -7,10 +7,21 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { X, Check, Plane, Bus, Train, Mountain, Bed, Compass, Utensils } from "lucide-react-native";
+import {
+  X,
+  Check,
+  Plane,
+  Bus,
+  Train,
+  Mountain,
+  Bed,
+  Compass,
+  Utensils,
+  Wallet,
+} from "lucide-react-native";
 import { colors, radii } from "@/theme";
 import { AppText, Button, Input } from "@/components/ui";
-import { useAppStore, WaypointType } from "@/store";
+import { useAppStore, WaypointType, CurrencyCode, DEFAULT_CURRENCIES } from "@/store";
 
 const WAYPOINT_TYPES: { id: WaypointType; label: string; icon: any }[] = [
   { id: "trek", label: "Trilha", icon: Mountain },
@@ -27,7 +38,7 @@ export const AddWaypointModal: React.FC<{
   onClose: () => void;
   defaultDayIndex?: number;
 }> = ({ visible, onClose, defaultDayIndex = 1 }) => {
-  const { addWaypoint } = useAppStore();
+  const { activeTrip, addWaypoint } = useAppStore();
 
   const [title, setTitle] = useState("");
   const [locationName, setLocationName] = useState("");
@@ -36,6 +47,10 @@ export const AddWaypointModal: React.FC<{
   const [type, setType] = useState<WaypointType>("trek");
   const [elevationMeters, setElevationMeters] = useState("");
   const [distanceKm, setDistanceKm] = useState("");
+  const [estimatedCost, setEstimatedCost] = useState("");
+  const [estimatedCurrency, setEstimatedCurrency] = useState<CurrencyCode>(
+    activeTrip?.localCurrencies[0] || "THB"
+  );
   const [notes, setNotes] = useState("");
 
   const handleSave = () => {
@@ -50,6 +65,8 @@ export const AddWaypointModal: React.FC<{
       locationName: locationName.trim(),
       elevationMeters: elevationMeters ? parseInt(elevationMeters, 10) : undefined,
       distanceKm: distanceKm ? parseFloat(distanceKm.replace(",", ".")) : undefined,
+      estimatedCost: estimatedCost ? parseFloat(estimatedCost.replace(",", ".")) : undefined,
+      estimatedCurrency,
       notes: notes.trim() || undefined,
     });
 
@@ -58,6 +75,7 @@ export const AddWaypointModal: React.FC<{
     setLocationName("");
     setElevationMeters("");
     setDistanceKm("");
+    setEstimatedCost("");
     setNotes("");
     onClose();
   };
@@ -84,7 +102,7 @@ export const AddWaypointModal: React.FC<{
             borderTopRightRadius: radii["2xl"],
             borderWidth: 1,
             borderColor: colors.grayscale[500],
-            maxHeight: "90%",
+            maxHeight: "92%",
             paddingBottom: 24,
           }}
         >
@@ -101,9 +119,14 @@ export const AddWaypointModal: React.FC<{
               borderColor: colors.grayscale[600],
             }}
           >
-            <AppText variant="headline" style={{ fontWeight: "700" }}>
-              Adicionar Parada ao Roteiro
-            </AppText>
+            <View>
+              <AppText variant="headline" style={{ fontWeight: "700" }}>
+                Nova Parada no Roteiro
+              </AppText>
+              <AppText variant="caption" color={colors.primary[100]}>
+                Gravada offline no mapa da viagem
+              </AppText>
+            </View>
             <TouchableOpacity
               onPress={onClose}
               style={{
@@ -123,10 +146,10 @@ export const AddWaypointModal: React.FC<{
             contentContainerStyle={{ padding: 20, gap: 16 }}
             showsVerticalScrollIndicator={false}
           >
-            {/* Seletor de Tipo */}
+            {/* Tipo de atividade */}
             <View style={{ gap: 8 }}>
               <AppText variant="caption" color={colors.grayscale[300]}>
-                Tipo de Atividade / Transporte
+                Tipo de Atividade
               </AppText>
               <ScrollView
                 horizontal
@@ -147,21 +170,21 @@ export const AddWaypointModal: React.FC<{
                         gap: 6,
                         paddingHorizontal: 12,
                         paddingVertical: 8,
-                        borderRadius: radii.md,
+                        borderRadius: radii.sm,
                         backgroundColor: isSelected
-                          ? "rgba(56, 189, 248, 0.2)"
+                          ? "rgba(255, 104, 56, 0.2)"
                           : colors.grayscale[600],
                         borderWidth: 1,
                         borderColor: isSelected
-                          ? colors.adventure.sky
+                          ? colors.primary[100]
                           : colors.grayscale[500],
                       }}
                     >
                       <Icon
-                        size={14}
+                        size={15}
                         color={
                           isSelected
-                            ? colors.adventure.sky
+                            ? colors.primary[100]
                             : colors.grayscale[300]
                         }
                       />
@@ -169,10 +192,10 @@ export const AddWaypointModal: React.FC<{
                         variant="caption"
                         color={
                           isSelected
-                            ? colors.adventure.sky
+                            ? colors.primary[100]
                             : colors.grayscale[200]
                         }
-                        style={{ fontWeight: "700" }}
+                        style={{ fontWeight: "600" }}
                       >
                         {t.label}
                       </AppText>
@@ -182,10 +205,10 @@ export const AddWaypointModal: React.FC<{
               </ScrollView>
             </View>
 
-            {/* Título */}
+            {/* Título da Parada */}
             <Input
-              label="Nome da Atividade ou Destino"
-              placeholder="Ex: Trilha das 7 Quedas / Check-in Hostel"
+              label="Nome da Atividade ou Parada"
+              placeholder="Ex: Trilha das Cachoeiras / Trem Noturno"
               value={title}
               onChangeText={setTitle}
             />
@@ -216,6 +239,66 @@ export const AddWaypointModal: React.FC<{
                   value={time}
                   onChangeText={setTime}
                 />
+              </View>
+            </View>
+
+            {/* Previsão de Custo (Pilar 3: Integração Roteiro ⇄ Despesas) */}
+            <View style={{ gap: 6 }}>
+              <View style={{ flexDirection: "row", gap: 12 }}>
+                <View style={{ flex: 2 }}>
+                  <Input
+                    label="Custo Previsto (Opcional)"
+                    placeholder="Ex: 300"
+                    keyboardType="numeric"
+                    value={estimatedCost}
+                    onChangeText={setEstimatedCost}
+                    leftIcon={<Wallet size={16} color={colors.adventure.amber} />}
+                  />
+                </View>
+                <View style={{ flex: 1, justifyContent: "flex-end" }}>
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ gap: 6, paddingBottom: 2 }}
+                  >
+                    {[
+                      activeTrip?.localCurrencies[0] || "THB",
+                      activeTrip?.baseCurrency || "BRL",
+                      "USD",
+                    ].map((cur) => (
+                      <TouchableOpacity
+                        key={cur}
+                        onPress={() => setEstimatedCurrency(cur as CurrencyCode)}
+                        style={{
+                          paddingHorizontal: 10,
+                          paddingVertical: 10,
+                          borderRadius: radii.md,
+                          backgroundColor:
+                            estimatedCurrency === cur
+                              ? colors.primary[100]
+                              : colors.grayscale[600],
+                          borderWidth: 1,
+                          borderColor:
+                            estimatedCurrency === cur
+                              ? colors.primary[100]
+                              : colors.grayscale[500],
+                        }}
+                      >
+                        <AppText
+                          variant="caption"
+                          color={
+                            estimatedCurrency === cur
+                              ? colors.grayscale[100]
+                              : colors.grayscale[300]
+                          }
+                          style={{ fontWeight: "700" }}
+                        >
+                          {cur}
+                        </AppText>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
               </View>
             </View>
 
@@ -262,4 +345,3 @@ export const AddWaypointModal: React.FC<{
     </Modal>
   );
 };
-

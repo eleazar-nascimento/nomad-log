@@ -38,17 +38,45 @@ const PAYMENT_METHODS: { id: PaymentMethod; label: string }[] = [
 export const QuickExpenseModal: React.FC<{
   visible: boolean;
   onClose: () => void;
-}> = ({ visible, onClose }) => {
+  initialDescription?: string;
+  initialLocation?: string;
+  initialAmount?: string;
+  initialCurrency?: CurrencyCode;
+  initialCategory?: ExpenseCategory;
+  onExpenseCreated?: (expenseId: string) => void;
+}> = ({
+  visible,
+  onClose,
+  initialDescription,
+  initialLocation,
+  initialAmount,
+  initialCurrency,
+  initialCategory,
+  onExpenseCreated,
+}) => {
   const { activeTrip, addExpense, state } = useAppStore();
 
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState(initialAmount || "");
   const [currency, setCurrency] = useState<CurrencyCode>(
-    activeTrip?.localCurrencies[0] || "THB"
+    initialCurrency || activeTrip?.localCurrencies[0] || "THB"
   );
-  const [category, setCategory] = useState<ExpenseCategory>("food");
-  const [description, setDescription] = useState("");
-  const [locationName, setLocationName] = useState("");
+  const [category, setCategory] = useState<ExpenseCategory>(
+    initialCategory || "food"
+  );
+  const [description, setDescription] = useState(initialDescription || "");
+  const [locationName, setLocationName] = useState(initialLocation || "");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");
+
+  // Atualiza os campos sempre que o modal abre com dados iniciais
+  React.useEffect(() => {
+    if (visible) {
+      if (initialAmount !== undefined) setAmount(initialAmount);
+      if (initialDescription !== undefined) setDescription(initialDescription);
+      if (initialLocation !== undefined) setLocationName(initialLocation);
+      if (initialCurrency) setCurrency(initialCurrency);
+      if (initialCategory) setCategory(initialCategory);
+    }
+  }, [visible, initialAmount, initialDescription, initialLocation, initialCurrency, initialCategory]);
 
   const parsedAmount = parseFloat(amount.replace(",", ".")) || 0;
   const convertedBase = activeTrip
@@ -58,6 +86,7 @@ export const QuickExpenseModal: React.FC<{
   const handleSave = () => {
     if (parsedAmount <= 0) return;
 
+    const generatedId = `exp_${Date.now()}`;
     addExpense({
       amount: parsedAmount,
       currency,
@@ -66,6 +95,8 @@ export const QuickExpenseModal: React.FC<{
       locationName: locationName.trim() || "Parada offline",
       paymentMethod,
     });
+
+    onExpenseCreated?.(generatedId);
 
     // Limpa campos e fecha
     setAmount("");
